@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#0f766e">
+<title>ببلو کھاتا</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:#eef4f3;color:#1f2937;font:700 19px/1.9 'Noto Naskh Arabic',serif}
+button,input{font:inherit}
+a{color:inherit}
+.page{min-height:100vh;padding-bottom:120px}
+.anim{animation:fade .4s ease}
+@keyframes fade{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes up{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.8);background:#fef9c3}60%{transform:scale(1.04)}100%{transform:none}}
+@keyframes float{50%{transform:translateY(-10px)}}
+@keyframes pulse{50%{transform:scale(1.15)}}
+@keyframes fadeo{from{opacity:0}}
+@keyframes slide{from{transform:translateY(100%)}}
+.top{background:linear-gradient(135deg,#0f766e,#14b8a6);color:#fff;padding:16px 16px 22px;border-radius:0 0 30px 30px;box-shadow:0 6px 18px #0f766e44}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.row>.btn{width:auto;flex:1}
+.ib{background:#ffffff30;border:0;color:#fff;border-radius:14px;padding:4px 12px;font-size:22px;line-height:1.4}
+.ib small{display:block;font-size:13px}
+.tot{text-align:center;margin-top:10px}
+.amt{font-size:44px;line-height:1.3}
+.wrap{padding:14px}
+.in{width:100%;border:2px solid #cbd5e1;border-radius:16px;padding:10px 14px;font-size:22px;background:#fff;margin:6px 0;text-align:right;outline:0;transition:border .2s}
+.in:focus{border-color:#14b8a6}
+.btn{display:block;width:100%;border:0;border-radius:18px;padding:10px;font-size:23px;color:#fff;background:#0f766e;box-shadow:0 4px 0 #0a5a54;transition:transform .12s,box-shadow .12s;margin:8px 0}
+.btn:active{transform:translateY(4px) scale(.98);box-shadow:none}
+.btn.red{background:#dc2626;box-shadow:0 4px 0 #a31b1b}
+.btn.grn{background:#16a34a;box-shadow:0 4px 0 #0f7a36}
+.btn.lite{background:#e2e8f0;color:#1f2937;box-shadow:0 4px 0 #cbd5e1}
+.btn.busy{opacity:.6;pointer-events:none}
+.fix{position:fixed;bottom:0;left:0;right:0;padding:10px 14px 14px;background:linear-gradient(transparent,#eef4f3 35%)}
+.card{background:#fff;border-radius:20px;padding:10px 16px;margin:10px 0;box-shadow:0 2px 10px #0001;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.card.col{flex-direction:column;align-items:stretch}
+.anim .card{animation:up .4s both}
+.cust:active{transform:scale(.98)}
+.nm{font-size:23px}
+.bl{font-size:26px;text-align:left;line-height:1.4}
+.bl small{display:block;font-size:14px}
+.r{color:#dc2626}.g{color:#16a34a}
+.ent{border-right:8px solid}
+.ent.rd{border-color:#dc2626}.ent.gr{border-color:#16a34a}
+.ent.new{animation:pop .6s}
+.ea{font-size:24px}
+.del{background:#fee2e2;border:0;border-radius:14px;font-size:24px;padding:6px 12px}
+.empty{text-align:center;color:#64748b;padding:40px 10px}
+.c{text-align:center}
+.logo{font-size:70px;margin-top:30px;animation:float 3s ease-in-out infinite}
+.sub{margin:0;color:#64748b}
+.ov{position:fixed;inset:0;background:#0007;display:flex;align-items:flex-end;z-index:9;animation:fadeo .2s}
+.box{background:#fff;width:100%;border-radius:28px 28px 0 0;padding:14px 16px 22px;animation:slide .3s ease;max-height:90vh;overflow:auto}
+.box h2{margin:6px 0}
+.mic{background:#e0f2fe;border:0;border-radius:16px;font-size:26px;padding:8px 14px}
+.mic.on{animation:pulse 1s infinite;background:#fecaca}
+.er{color:#dc2626;text-align:center;min-height:30px}
+.lnk{background:none;border:0;color:#0f766e;font-size:20px;text-decoration:underline;display:block;margin:6px auto}
+.pay{background:#fff;border-radius:20px;padding:10px 14px;margin:10px 0;box-shadow:0 2px 10px #0001}
+.pn{font-size:30px;letter-spacing:1px;display:block}
+.warn{background:#fee2e2;border-radius:14px;padding:8px 12px;color:#b91c1c;margin:8px 0}
+.st{display:flex;gap:8px;margin-top:12px}
+.st div{flex:1;background:#ffffff30;border-radius:16px;text-align:center;padding:4px;font-size:15px;line-height:1.5}
+.st b{display:block;font-size:28px}
+#toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:8px 20px;border-radius:30px;z-index:99;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+#toast.on{opacity:1}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="sheet"></div>
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyCFW0RgqKYr4oqPkzXN12Fi3vasAXdVBoA",
+  authDomain:"bablu-khata.firebaseapp.com",
+  projectId:"bablu-khata",
+  storageBucket:"bablu-khata.firebasestorage.app",
+  messagingSenderId:"123920071236",
+  appId:"1:123920071236:web:636866ce33cb0c7dcdda11"
+});
+const auth=firebase.auth(),db=firebase.firestore(),FV=firebase.firestore.FieldValue,TSP=firebase.firestore.Timestamp;
+db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
+const ADMIN='admin@bablu.app',DAY=864e5,PAY='03012207137';
+let uid,me,custs=[],ents=[],users=[],unsubs=[],view={n:'list'},q='',authMode='login',cb,showFee=false,first=true;
+let base=JSON.parse(localStorage.getItem('bt')||'null');
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const en=s=>String(s||'').replace(/[۰-۹]/g,d=>d.charCodeAt(0)-1776).replace(/[٠-٩]/g,d=>d.charCodeAt(0)-1632);
+const num=n=>Math.round(n).toLocaleString('en-US');
+const fmt=t=>{const d=new Date(t);return d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear()};
+const mail=(p,v)=>p+(v>1?'v'+v:'')+'@bablu.app';
+const focus=id=>setTimeout(()=>{const e=$('#'+id);e&&e.focus()},350);
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),2200)}
+function sheet(h){$('#sheet').innerHTML='<div class="ov" onclick="if(event.target==this)closeSheet()"><div class="box">'+h+'</div></div>'}
+function closeSheet(){$('#sheet').innerHTML=''}
+function ask(msg,yes,fn,cls){cb=fn;sheet(`<h2 class="c">${msg}</h2><button class="btn ${cls||'red'}" onclick="closeSheet();cb()">${yes}</button><button class="btn lite" onclick="closeSheet()">❌ نہیں، رہنے دیں</button>`)}
+function er(m){const e=$('#er');if(e)e.textContent=m}
+function busy(b){const g=$('#go');if(g)g.classList.toggle('busy',!!b)}
+function em(e){const c=e.code||'';
+  if(/wrong-password|invalid-credential|invalid-login|user-not-found/.test(c))return 'پن غلط ہے';
+  if(/network|unavailable/.test(c))return 'انٹرنیٹ نہیں ہے';
+  if(c.includes('too-many'))return 'بہت کوششیں ہو گئیں۔ تھوڑی دیر بعد کریں';
+  if(c.includes('permission'))return 'اجازت نہیں ہے (رولز چیک کریں)';
+  return 'کچھ گڑبڑ ہو گئی: '+c}
+
+/* ---------- وقت (Firebase سے) ---------- */
+function sNow(){if(!base)return Date.now();return base.s+Math.max(Date.now()-base.l,0)}
+function expired(){return !me||!me.paidUntil||me.paidUntil.toMillis()<sNow()}
+async function sync(){
+  try{
+    const r=db.doc('users/'+uid);
+    const job=r.update({lastSeen:FV.serverTimestamp()}).then(()=>r.get({source:'server'}));
+    const s=await Promise.race([job,new Promise((_,j)=>setTimeout(j,8000))]);
+    const t=s.data().lastSeen;
+    if(t){base={s:t.toMillis(),l:Date.now()};localStorage.setItem('bt',JSON.stringify(base));render(false)}
+  }catch(e){}
+}
+
+/* ---------- لاگ ان ---------- */
+function authHTML(){
+  const m=authMode;
+  return `<div class="page anim c"><div class="logo">📒</div><h1 style="margin:0">ببلو کھاتا</h1>
+  <p class="sub">${m=='login'?'اپنا کھاتا کھولیں':m=='new'?'نیا کھاتا بنائیں':'نیا پن بنائیں'}</p>
+  <div class="wrap">
+  ${m=='reset'?'<div class="warn">⚠️ پرانا سارا ڈیٹا ختم ہو جائے گا</div>':''}
+  ${m!='login'?'<input id="nm" class="in" maxlength="30" placeholder="آپ کا نام">':''}
+  <input id="ph" class="in" type="tel" inputmode="numeric" maxlength="11" placeholder="موبائل نمبر (03001234567)">
+  <input id="pn" class="in" type="tel" inputmode="numeric" maxlength="6" style="-webkit-text-security:disc" placeholder="${m=='login'?'پن (6 ہندسے)':'نیا پن (6 ہندسے)'}">
+  <div id="er" class="er"></div>
+  <button id="go" class="btn" onclick="${m=='login'?'login()':m=='new'?'signup(false)':'signup(true)'}">${m=='login'?'✅ کھاتے میں جائیں':m=='new'?'✅ کھاتا بنائیں':'⚠️ نیا کھاتا بنائیں'}</button>
+  ${m=='login'?'<button class="lnk" onclick="setMode(\'new\')">🆕 نیا کھاتا بنائیں</button><button class="lnk" onclick="setMode(\'reset\')">🔑 پن بھول گئے؟</button>':'<button class="lnk" onclick="setMode(\'login\')">↩️ واپس</button>'}
+  </div></div>`}
+function setMode(m){authMode=m;$('#app').innerHTML=authHTML()}
+function vals(){return{ph:en($('#ph').value).trim(),pn:en($('#pn').value).trim(),nm:$('#nm')?$('#nm').value.trim():''}}
+function check(v,needName){
+  if(needName&&!v.nm){er('اپنا نام لکھیں');return 0}
+  if(!/^03\d{9}$/.test(v.ph)){er('موبائل نمبر 11 ہندسوں کا لکھیں');return 0}
+  if(!/^\d{6}$/.test(v.pn)){er('پن 6 ہندسوں کا لکھیں');return 0}
+  return 1}
+async function login(){
+  const v=vals();if(!check(v,0))return;er('');busy(1);
+  try{
+    const d=await db.doc('phones/'+v.ph).get();
+    if(!d.exists){busy(0);return er('اس نمبر کا کھاتا نہیں ہے')}
+    await auth.signInWithEmailAndPassword(mail(v.ph,d.data().v),v.pn);
+  }catch(e){busy(0);er(em(e))}
+}
+async function signup(reset){
+  const v=vals();if(!check(v,1))return;er('');busy(1);
+  try{
+    const d=await db.doc('phones/'+v.ph).get();let ver=1;
+    if(d.exists){
+      if(!reset){busy(0);return er('یہ نمبر پہلے سے ہے۔ پن بھول گئے ہوں تو "پن بھول گئے" دبائیں')}
+      ver=d.data().v+1;
+    }else if(reset){busy(0);return er('اس نمبر کا کوئی کھاتا نہیں ہے')}
+    const c=await auth.createUserWithEmailAndPassword(mail(v.ph,ver),v.pn);
+    const u=c.user.uid;
+    await db.doc('users/'+u).set({name:v.nm,phone:v.ph,createdAt:FV.serverTimestamp(),paidUntil:TSP.fromMillis(Date.now()+30*DAY),lastSeen:FV.serverTimestamp()});
+    await db.doc('phones/'+v.ph).set({v:ver,uid:u});
+  }catch(e){busy(0);er(em(e))}
+}
+function logout(){ask('باہر نکلنا ہے؟','🚪 ہاں، باہر',()=>auth.signOut(),'gray')}
+
+/* ---------- حساب ---------- */
+function balMap(){const m={};ents.forEach(e=>{if(!e.del)m[e.cid]=(m[e.cid]||0)+(e.type=='d'?e.amt:-e.amt)});return m}
+function go(v){view=v;closeSheet();render(true);scrollTo(0,0)}
+function render(anim){
+  const a=$('#app');
+  if(!me){a.innerHTML='<div class="page c"><div class="logo">📒</div><h2>⏳ کھل رہا ہے...</h2></div>';return}
+  if(expired()){showFee=true;closeSheet();a.innerHTML=feeHTML();return}
+  showFee=false;
+  a.innerHTML=view.n=='cust'?custHTML(anim):view.n=='trash'?trashHTML(anim):listHTML(anim);
+}
+
+/* گاہک فہرست */
+function listHTML(anim){
+  const bs=balMap();let tot=0;
+  custs.forEach(c=>{if(!c.del&&(bs[c.id]||0)>0)tot+=bs[c.id]});
+  return `<div class="page${anim?' anim':''}">
+  <div class="top"><div class="row"><div><small>دکاندار</small><br><b style="font-size:24px">🏪 ${esc(me.name)}</b></div>
+  <div class="row"><button class="ib" onclick="go({n:'trash'})">🗑️<small>ڈیلیٹ</small></button><button class="ib" onclick="logout()">🚪<small>باہر</small></button></div></div>
+  <div class="tot"><small>کل بقایا (ہمیں لینے ہیں)</small><div class="amt">${num(tot)}</div></div></div>
+  <div class="wrap"><input class="in" placeholder="🔍 گاہک ڈھونڈیں" value="${esc(q)}" oninput="q=this.value;$('#cl').innerHTML=cl()">
+  <div id="cl">${cl()}</div></div>
+  <div class="fix"><button class="btn" onclick="addCust()">➕ نیا گاہک</button></div></div>`}
+function cl(){
+  const bs=balMap(),all=custs.filter(c=>!c.del);
+  const l=all.filter(c=>c.name.includes(q.trim())).sort((a,b)=>(bs[b.id]||0)-(bs[a.id]||0)||a.name.localeCompare(b.name));
+  if(!l.length)return `<div class="empty">${all.length?'کوئی نہیں ملا':'ابھی کوئی گاہک نہیں<br>نیچے "نیا گاہک" دبائیں'}</div>`;
+  return l.map(c=>{const b=bs[c.id]||0;
+    return `<div class="card cust" onclick="go({n:'cust',id:'${c.id}'})"><div class="nm">👤 ${esc(c.name)}</div>
+    <div class="bl ${b>0?'r':b<0?'g':''}">${b==0?'<small>حساب صاف</small>':num(Math.abs(b))+'<small>'+(b>0?'لینے ہیں':'دینے ہیں')+'</small>'}</div></div>`}).join('')}
+function addCust(){
+  sheet(`<h2 class="c">➕ نیا گاہک</h2><input id="x" class="in" maxlength="30" placeholder="گاہک کا نام"><button class="btn" onclick="saveCust()">✅ محفوظ کریں</button><button class="btn lite" onclick="closeSheet()">❌ بند کریں</button>`);focus('x')}
+function saveCust(){
+  const n=$('#x').value.trim();if(!n)return toast('نام لکھیں');
+  db.collection('users/'+uid+'/customers').add({name:n,del:false,ts:Date.now()});
+  closeSheet();toast('✅ گاہک شامل ہو گیا')}
+function delCust(id){
+  ask('اس گاہک کو ڈیلیٹ کریں؟','🗑️ ہاں، ڈیلیٹ',()=>{
+    db.doc('users/'+uid+'/customers/'+id).update({del:true,delAt:Date.now()});
+    view={n:'list'};render(true);toast('حال ہی میں ڈیلیٹ میں چلا گیا')})}
+
+/* گاہک کا کھاتا */
+function custHTML(anim){
+  const c=custs.find(x=>x.id==view.id);
+  if(!c||c.del){view={n:'list'};return listHTML(anim)}
+  const es=ents.filter(e=>e.cid==c.id&&!e.del).sort((a,b)=>b.ts-a.ts);
+  const b=es.reduce((s,e)=>s+(e.type=='d'?e.amt:-e.amt),0),n=Date.now();
+  return `<div class="page${anim?' anim':''}">
+  <div class="top"><div class="row"><button class="ib" onclick="go({n:'list'})">➡️<small>واپس</small></button>
+  <b style="font-size:24px">👤 ${esc(c.name)}</b>
+  <button class="ib" onclick="delCust('${c.id}')">🗑️<small>ہٹائیں</small></button></div>
+  <div class="tot"><small>${b>0?'ہمیں لینے ہیں':b<0?'ہم نے دینے ہیں':'حساب صاف'}</small><div class="amt">${num(Math.abs(b))}</div></div>
+  ${b>0?'<button class="ib" style="width:100%;margin-top:6px" onclick="wa()">📲 واٹس ایپ پر بقایا بھیجیں</button>':''}</div>
+  <div class="wrap"><div class="row"><button class="btn red" onclick="entSheet('d')">🔴 ادھار دیا</button><button class="btn grn" onclick="entSheet('l')">🟢 پیسے لیے</button></div>
+  ${es.length?es.map(e=>`<div class="card ent ${e.type=='d'?'rd':'gr'}${n-e.ts<3000?' new':''}"><div>
+  <div class="ea ${e.type=='d'?'r':'g'}">${e.type=='d'?'ادھار دیا':'پیسے لیے'}: ${num(e.amt)}</div>
+  ${e.note?'<div>'+esc(e.note)+'</div>':''}<small style="color:#64748b">${fmt(e.ts)}</small></div>
+  <button class="del" onclick="delEnt('${e.id}')">🗑️</button></div>`).join(''):'<div class="empty">ابھی کوئی انٹری نہیں</div>'}
+  </div></div>`}
+function entSheet(t){
+  sheet(`<h2 class="c ${t=='d'?'r':'g'}">${t=='d'?'🔴 ادھار دیا':'🟢 پیسے لیے'}</h2>
+  <input id="am" class="in" type="tel" inputmode="numeric" placeholder="رقم (روپے)">
+  <div class="row"><input id="nt" class="in" maxlength="60" placeholder="تفصیل (مثلاً: 2 کلو چینی)"><button class="mic" onclick="mic(this)">🎤</button></div>
+  <button class="btn ${t=='d'?'red':'grn'}" onclick="saveEnt('${t}')">✅ محفوظ کریں</button>
+  <button class="btn lite" onclick="closeSheet()">❌ بند کریں</button>`);focus('am')}
+function mic(btn){
+  const R=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!R)return toast('اس فون میں مائک نہیں چلتا');
+  const r=new R();r.lang='ur-PK';
+  r.onresult=e=>{const i=$('#nt');i.value+=(i.value?' ':'')+e.results[0][0].transcript};
+  r.onend=()=>btn.classList.remove('on');r.onerror=()=>btn.classList.remove('on');
+  btn.classList.add('on');try{r.start()}catch(x){btn.classList.remove('on')}}
+function saveEnt(t){
+  const a=parseInt(en($('#am').value).replace(/[^\d]/g,''));
+  if(!a||a<=0)return toast('رقم لکھیں');
+  db.collection('users/'+uid+'/entries').add({cid:view.id,type:t,amt:a,note:$('#nt').value.trim(),ts:Date.now(),del:false});
+  closeSheet();toast('✅ محفوظ ہو گیا')}
+function delEnt(id){
+  ask('اس انٹری کو ڈیلیٹ کریں؟','🗑️ ہاں، ڈیلیٹ',()=>{
+    db.doc('users/'+uid+'/entries/'+id).update({del:true,delAt:Date.now()});
+    toast('حال ہی میں ڈیلیٹ میں چلی گئی')})}
+function wa(){
+  const c=custs.find(x=>x.id==view.id),b=balMap()[c.id]||0;
+  open('https://wa.me/?text='+encodeURIComponent(`السلام علیکم ${c.name} صاحب،\nآپ کا بقایا ${num(b)} روپے ہے۔\nشکریہ — ${me.name}`))}
+
+/* حال ہی میں ڈیلیٹ */
+function trashHTML(anim){
+  const n=Date.now(),left=t=>Math.max(0,Math.ceil(((t||n)+30*DAY-n)/DAY));
+  const dc=custs.filter(c=>c.del),live=new Set(custs.filter(c=>!c.del).map(c=>c.id));
+  const de=ents.filter(e=>e.del&&live.has(e.cid));
+  const nameOf=id=>{const c=custs.find(x=>x.id==id);return c?c.name:''};
+  const btns=(r,p)=>`<div class="row"><button class="btn grn" style="font-size:19px" onclick="${r}">♻️ واپس لائیں</button><button class="btn red" style="font-size:19px" onclick="${p}">🗑️ ہمیشہ کے لیے ختم</button></div>`;
+  return `<div class="page${anim?' anim':''}">
+  <div class="top"><div class="row"><button class="ib" onclick="go({n:'list'})">➡️<small>واپس</small></button><b style="font-size:24px">🗑️ حال ہی میں ڈیلیٹ</b><span style="width:50px"></span></div>
+  <div class="tot"><small>یہاں 1 مہینہ رہتا ہے، پھر خود ختم</small></div></div>
+  <div class="wrap">
+  ${dc.length+de.length==0?'<div class="empty">یہاں کچھ نہیں ہے</div>':''}
+  ${dc.map(c=>`<div class="card col"><div class="nm">👤 گاہک: ${esc(c.name)}</div><small>باقی ${left(c.delAt)} دن</small>${btns(`restC('${c.id}')`,`permC('${c.id}')`)}</div>`).join('')}
+  ${de.map(e=>`<div class="card col"><div class="ea ${e.type=='d'?'r':'g'}">${esc(nameOf(e.cid))} — ${e.type=='d'?'ادھار دیا':'پیسے لیے'} ${num(e.amt)}</div>${e.note?'<div>'+esc(e.note)+'</div>':''}<small>باقی ${left(e.delAt)} دن</small>${btns(`restE('${e.id}')`,`permE('${e.id}')`)}</div>`).join('')}
+  </div></div>`}
+const back={del:false,delAt:FV.delete()};
+function restC(id){db.doc('users/'+uid+'/customers/'+id).update(back);toast('♻️ واپس آ گیا')}
+function restE(id){db.doc('users/'+uid+'/entries/'+id).update(back);toast('♻️ واپس آ گئی')}
+function permE(id){ask('ہمیشہ کے لیے ختم کریں؟<br><small>پھر واپس نہیں آئے گا</small>','🗑️ پکا ختم',()=>db.doc('users/'+uid+'/entries/'+id).delete())}
+function permC(id){ask('گاہک ہمیشہ کے لیے ختم کریں؟<br><small>اس کی انٹریاں بھی ختم ہوں گی</small>','🗑️ پکا ختم',()=>{
+  const b=db.batch();b.delete(db.doc('users/'+uid+'/customers/'+id));
+  ents.filter(e=>e.cid==id).forEach(e=>b.delete(db.doc('users/'+uid+'/entries/'+e.id)));b.commit()})}
+
+/* خود صفائی */
+function purge(){
+  const n=Date.now(),P='users/'+uid,b=db.batch();let c=0;
+  ents.forEach(e=>{if(c<400&&(e.ts<n-183*DAY||(e.del&&e.delAt&&n-e.delAt>30*DAY))){b.delete(db.doc(P+'/entries/'+e.id));c++}});
+  custs.forEach(x=>{if(c<400&&x.del&&x.delAt&&n-x.delAt>30*DAY){b.delete(db.doc(P+'/customers/'+x.id));c++;
+    ents.filter(e=>e.cid==x.id).forEach(e=>{if(c<450){b.delete(db.doc(P+'/entries/'+e.id));c++}})}});
+  if(c)b.commit().catch(()=>{})}
+
+/* فیس ختم */
+function feeHTML(){
+  const card=(t)=>`<div class="pay"><div>${t}</div><b dir="ltr" class="pn">${PAY}</b><button class="btn lite" onclick="cp()">📋 نمبر کاپی کریں</button></div>`;
+  return `<div class="page anim c"><div class="logo">🔒</div><h1 style="margin:0">آپ کا کھاتا بند ہے</h1>
+  <p class="sub">ماہانہ فیس <b class="r">700 روپے</b></p>
+  <div class="wrap">${card('💚 JazzCash')}${card('💛 Easypaisa')}
+  <button class="btn grn" onclick="paid()">💸 پیسے بھیجیں</button>
+  <small>پیسے بھیج کر یہ بٹن دبائیں، واٹس ایپ پر ہمیں بتا دیں</small>
+  <button class="lnk" onclick="location.reload()">🔄 دوبارہ دیکھیں</button>
+  <button class="lnk" onclick="logout()">🚪 باہر نکلیں</button></div></div>`}
+function cp(){try{navigator.clipboard.writeText(PAY);toast('✅ نمبر کاپی ہو گیا')}catch(e){toast(PAY)}}
+function paid(){open('https://wa.me/92'+PAY.slice(1)+'?text='+encodeURIComponent(`السلام علیکم، میں نے 700 روپے فیس بھیج دی ہے۔\nنام: ${me.name}\nنمبر: ${me.phone}`))}
+
+/* ---------- ایڈمن ---------- */
+function adminLoginHTML(){
+  return `<div class="page anim c"><div class="logo">🛠️</div><h1 style="margin:0">ایڈمن</h1><div class="wrap">
+  <input id="ap" class="in" type="password" placeholder="ایڈمن پاس ورڈ"><div id="er" class="er"></div>
+  <button id="go" class="btn" onclick="adminLogin()">✅ اندر جائیں</button></div></div>`}
+async function adminLogin(){
+  busy(1);er('');
+  try{await auth.signInWithEmailAndPassword(ADMIN,$('#ap').value)}catch(e){busy(0);er(em(e))}}
+function adminStart(){
+  $('#app').innerHTML='<div class="page c"><div class="logo">🛠️</div><h2>⏳</h2></div>';
+  unsubs=[db.collection('users').onSnapshot(s=>{users=s.docs.map(d=>({id:d.id,...d.data()}));adminRender()},e=>toast(em(e)))]}
+function adminRender(){
+  const n=Date.now(),t0=new Date().setHours(0,0,0,0);
+  const cm=u=>u.createdAt?u.createdAt.toMillis():n,pu=u=>u.paidUntil?u.paidUntil.toMillis():0,ex=u=>pu(u)<n;
+  const seen={},l=users.slice().sort((a,b)=>cm(b)-cm(a)).filter(u=>seen[u.phone]?0:(seen[u.phone]=1));
+  $('#app').innerHTML=`<div class="page">
+  <div class="top"><div class="row"><b style="font-size:24px">🛠️ ایڈمن پینل</b><button class="ib" onclick="auth.signOut()">🚪<small>باہر</small></button></div>
+  <div class="st"><div>کل دکاندار<b>${l.length}</b></div><div>آج کے نئے<b>${l.filter(u=>cm(u)>=t0).length}</b></div><div>فیس باقی<b>${l.filter(ex).length}</b></div></div></div>
+  <div class="wrap">${l.map(u=>`<div class="card col"><div class="nm">👤 ${esc(u.name)}</div>
+  <a href="tel:${esc(u.phone)}" dir="ltr" style="text-align:right">📞 ${esc(u.phone)}</a>
+  <small>📅 ${fmt(cm(u))} — ${ex(u)?'🔴 بند':'🟢 کھلا ('+Math.ceil((pu(u)-n)/DAY)+' دن باقی)'}</small>
+  <button class="btn ${ex(u)?'grn':'red'}" onclick="tog('${u.id}',${ex(u)})">${ex(u)?'🟢 کھاتہ کھولیں':'🔴 کھاتہ بند کریں'}</button></div>`).join('')||'<div class="empty">ابھی کوئی دکاندار نہیں</div>'}</div></div>`}
+function tog(id,open){
+  ask(open?'یہ کھاتہ 30 دن کے لیے کھولیں؟':'یہ کھاتہ بند کریں؟',open?'🟢 ہاں، کھولیں':'🔴 ہاں، بند کریں',
+  ()=>db.doc('users/'+id).update({paidUntil:TSP.fromMillis(open?Date.now()+30*DAY:Date.now()-1000)}),open?'grn':'red')}
+
+/* ---------- شروع ---------- */
+function userStart(u){
+  uid=u.uid;custs=[];ents=[];view={n:'list'};q='';first=true;me=null;render();
+  const P='users/'+uid;
+  unsubs=[
+    db.doc(P).onSnapshot(s=>{me=s.data()||null;render(first&&!!me);if(me)first=false}),
+    db.collection(P+'/customers').onSnapshot(s=>{custs=s.docs.map(d=>({id:d.id,...d.data()}));if(me)render(false)}),
+    db.collection(P+'/entries').onSnapshot(s=>{ents=s.docs.map(d=>({id:d.id,...d.data()}));if(me)render(false)})
+  ];
+  sync();setTimeout(purge,6000)}
+auth.onAuthStateChanged(u=>{
+  unsubs.forEach(f=>f());unsubs=[];me=null;uid=null;
+  const adm=location.hash=='#admin';
+  if(u&&u.email==ADMIN){if(!adm){auth.signOut();return}adminStart();return}
+  if(adm){$('#app').innerHTML=adminLoginHTML();return}
+  if(!u){authMode='login';$('#app').innerHTML=authHTML();return}
+  userStart(u)});
+addEventListener('hashchange',()=>location.reload());
+setInterval(()=>{if(me&&uid&&expired()!=showFee)render(false)},30000);
+</script>
+</body>
+</html>
