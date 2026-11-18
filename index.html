@@ -4,14 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta name="theme-color" content="#0f766e">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400..700&display=swap" rel="stylesheet">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400..700&family=Gulzar&display=swap" rel="stylesheet">
 <title>ببلو کھاتا</title>
 <style>
 @font-face{font-family:'Jameel';src:local('Jameel Noori Nastaleeq'),url('jameel.ttf')}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:linear-gradient(160deg,#eef4f3,#ddeee9);color:#1f2937;font:600 18px/2.4 'Jameel','Noto Nastaliq Urdu','Noto Naskh Arabic',serif;min-height:100vh}
+body{margin:0;background:linear-gradient(160deg,#eef4f3,#ddeee9);color:#1f2937;font:600 18px/2.4 'Jameel','Noto Nastaliq Urdu','Gulzar','Noto Naskh Arabic',serif;min-height:100vh}
 button,input{font:inherit}
 a{color:inherit;text-decoration:none}
 .page{min-height:100vh;padding-bottom:140px}
@@ -48,6 +50,7 @@ a{color:inherit;text-decoration:none}
 .btn.busy{opacity:.6;pointer-events:none}
 .btn.sp{flex:none;width:64px;padding:6px 0;animation:wave 2.4s infinite}
 .fix{position:fixed;bottom:0;left:0;right:0;padding:10px 14px 16px;background:linear-gradient(transparent,#ddeee9 38%)}
+.fix .btn{font-size:19px}
 .card{background:#fff;border-radius:20px;padding:6px 16px;margin:10px 0;box-shadow:0 2px 12px #0001;display:flex;justify-content:space-between;align-items:center;gap:10px}
 .card.col{flex-direction:column;align-items:stretch}
 .anim .card{animation:up .4s both;animation-delay:var(--d,0s)}
@@ -145,9 +148,10 @@ db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
 
 const ADMIN='admin@bablu.app',DAY=864e5,PAY_NUM='03012207137',WA_NUM='03480329691',APP_NAME='ببلو کھاتا',ALERT_DAYS=15;
 const ADM=location.hash=='#admin';
-let uid,me,custs=[],ents=[],users=[],unsubs=[],view={n:'list'},q='',authMode='login',cb,showFee=false,first=true,deferredInstall=null;
+let uid,me,custs=[],ents=[],sales=[],users=[],unsubs=[],view={n:'list'},q='',authMode='login',cb,showFee=false,first=true,deferredInstall=null;
 let base=JSON.parse(localStorage.getItem('bt')||'null');
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;const b=document.getElementById('installBtn');if(b)b.style.display='block'});
+addEventListener('appinstalled',()=>{deferredInstall=null});
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -171,7 +175,7 @@ function em(e){const c=e.code||'';
   if(c.includes('too-many'))return 'بہت کوششیں ہو گئیں۔ تھوڑی دیر بعد کریں';
   if(c.includes('permission'))return 'اجازت نہیں ہے';
   return 'کچھ گڑبڑ ہو گئی'}
-function footerHTML(){return `<div class="footer"><b>📒 ${APP_NAME}</b><br>واٹس ایپ: <a href="https://wa.me/92${WA_NUM.slice(1)}">${WA_NUM}</a><br><small>آپ کا ڈیجیٹل حساب کتاب</small><br><button class="lnk" onclick="nextVoice()">🔈 آواز بدلیں</button></div>`}
+function footerHTML(){return `<div class="footer"><b>📒 ${APP_NAME}</b><br>واٹس ایپ: <a href="https://wa.me/92${WA_NUM.slice(1)}">${WA_NUM}</a><br><small>آپ کا ڈیجیٹل حساب کتاب</small><br><button class="lnk" onclick="nextVoice()">🔈 آواز بدلیں</button>${deferredInstall?'<button class="lnk" onclick="installApp()">📲 ایپ ہوم اسکرین پر لگائیں</button>':''}</div>`}
 async function installApp(){
   if(!deferredInstall)return toast('ایپ پہلے سے انسٹال ہے یا انسٹال نہیں ہو سکتی');
   deferredInstall.prompt();const r=await deferredInstall.userChoice;
@@ -182,49 +186,77 @@ const urV=()=>window.speechSynthesis?speechSynthesis.getVoices().filter(x=>/^ur/
 if(window.speechSynthesis)speechSynthesis.onvoiceschanged=()=>{};
 function getVo(){const l=urV(),n=localStorage.getItem('vo');return l.find(x=>x.voiceURI==n)||l.find(x=>x.localService)||l[0]||null}
 function noVoice(){sheet(`<h2 class="c">🔈 اردو آواز نہیں ملی</h2><p class="c">فون Settings ← Google Text-to-speech (یا Speech Services) ← Install voice data ← اردو (پاکستان) ڈاؤن لوڈ کریں۔ ایک بار ڈاؤن لوڈ ہو جائے تو انٹرنیٹ کے بغیر بھی بولے گا۔</p><button class="btn" onclick="closeSheet()">✅ ٹھیک ہے</button>`)}
+const UW='زیرو ایک دو تین چار پانچ چھ سات آٹھ نو دس گیارہ بارہ تیرہ چودہ پندرہ سولہ سترہ اٹھارہ انیس بیس اکیس بائیس تئیس چوبیس پچیس چھبیس ستائیس اٹھائیس انتیس تیس اکتیس بتیس تینتیس چونتیس پینتیس چھتیس سینتیس اڑتیس انتالیس چالیس اکتالیس بیالیس تینتالیس چوالیس پینتالیس چھیالیس سینتالیس اڑتالیس انچاس پچاس اکاون باون ترپن چون پچپن چھپن ستاون اٹھاون انسٹھ ساٹھ اکسٹھ باسٹھ تریسٹھ چونسٹھ پینسٹھ چھیاسٹھ سڑسٹھ اڑسٹھ انہتر ستر اکہتر بہتر تہتر چوہتر پچھتر چھہتر ستتر اٹھہتر انیاسی اسی اکیاسی بیاسی تراسی چوراسی پچاسی چھیاسی ستاسی اٹھاسی نواسی نوے اکیانوے بانوے ترانوے چورانوے پچانوے چھیانوے ستانوے اٹھانوے ننانوے'.split(' ');
+// 1300 = "ایک ہزار، تین سو" (ہر حصے کے بیچ وقفہ تاکہ آواز "ہزار" نہ چھوڑے)
+function words(n){n=Math.round(Math.abs(n));if(n<100)return UW[n];const p=[],cr=Math.floor(n/1e7),lk=Math.floor(n%1e7/1e5),hz=Math.floor(n%1e5/1e3),sa=Math.floor(n%1e3/100),r=n%100;
+  if(cr)p.push(words(cr)+' کروڑ');if(lk)p.push(UW[lk]+' لاکھ');if(hz)p.push(UW[hz]+' ہزار');if(sa)p.push(UW[sa]+' سو');if(r)p.push(UW[r]);return p.join('، ')}
+const say=t=>String(t).replace(/\d[\d,]*/g,m=>words(m.replace(/,/g,'')));
+// بولی ہوئی اردو رقم ("ایک ہزار تین سو") کو عدد بناتا ہے
+function w2n(t){let tot=0,cur=0,ok=0;
+  for(const w of String(t).replace(/[،,.۔]/g,' ').split(/\s+/)){const i=UW.indexOf(w);
+    if(i>=0){cur+=i;ok=1}
+    else if(w=='سو'){cur=(cur||1)*100;ok=1}
+    else if(w=='ہزار'){tot+=(cur||1)*1e3;cur=0;ok=1}
+    else if(w=='لاکھ'){tot+=(cur||1)*1e5;cur=0;ok=1}
+    else if(w=='کروڑ'){tot+=(cur||1)*1e7;cur=0;ok=1}}
+  return ok?tot+cur:0}
 function speak(t){
   if(!window.speechSynthesis)return toast('یہ فون آواز نہیں دے سکتا');
-  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t),v=getVo();
+  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(say(t)),v=getVo();
   u.lang=v?v.lang:'ur-PK';if(v)u.voice=v;u.rate=.85;u.pitch=1.15;speechSynthesis.speak(u)}
 function nextVoice(){
   const l=urV();if(!l.length)return noVoice();
   const i=(l.findIndex(x=>x===getVo())+1)%l.length;localStorage.setItem('vo',l[i].voiceURI);
-  toast('آواز '+(i+1)+' / '+l.length);speak('السلام علیکم، یہ میری آواز ہے')}
+  toast('آواز '+(i+1)+' / '+l.length);speak('السلام علیکم، اللہ کے نام سے شروع کریں')}
 
-// مائک: خوبصورت اردو اسکرین، اجازت صاف مانگتا ہے
-let rec=null;
+// مائک: پہلی بار خود اجازت مانگتا ہے، ایک کلک پر شروع ہوتا ہے
+let rec=null,micT=0,micLock=0;
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 function showMic(t){if(!$('#mt'))$('#mc').innerHTML=`<div class="ov"><div class="box c"><div class="wv"><i></i><i></i><i></i><i></i><i></i></div><h2>🎤 بولیں</h2><div id="mt" class="mt"></div><button class="btn grn" onclick="stopMic()">✅ بول لیا</button><button class="btn lite" onclick="cancelMic()">❌ بند کریں</button></div></div>`;$('#mt').textContent=t||'سن رہا ہوں...'}
 function hideMic(){$('#mc').innerHTML=''}
-function stopMic(){if(rec)try{rec.stop()}catch(x){}}
-function cancelMic(){const r=rec;rec=null;if(r)try{r.abort()}catch(x){}hideMic()}
-let pend=null;
-async function permSheet(fn){pend=fn;let st='';try{st=(await navigator.permissions.query({name:'microphone'})).state}catch(x){}
-  sheet(`<h2 class="c">🎤 مائک کی اجازت</h2>${st=='denied'?'<p class="c r">مائک بلاک ہے، نیچے ترتیب بدلنی ہوگی</p>':''}<button class="btn grn" onclick="allowMic()">✅ اجازت دیں (Allow)</button><p class="c"><small>اگر Allow کا پیغام نہ آئے: فون Settings ← Apps ← Chrome ← Permissions ← Microphone ← Allow۔ یہی Google ایپ میں بھی کریں۔ پھر Chrome بند کر کے دوبارہ کھولیں۔<br>یا Chrome میں 🔒 ← Permissions ← Microphone ← Allow۔</small></p><button class="btn lite" onclick="closeSheet()">❌ بند کریں</button>`)}
+function stopMic(){const r=rec;if(!r)return;try{r.stop()}catch(x){}setTimeout(()=>{if(rec===r)cancelMic()},2500)}
+function cancelMic(){const r=rec;rec=null;if(r)try{r.abort()}catch(x){}hideMic();document.querySelectorAll('.mic.on').forEach(b=>b.classList.remove('on'))}
+let pend=null,waitBack=false;
+function permSheet(fn,why){pend=fn;const g=why=='google';
+  sheet(`<h2 class="c">🎤 اجازت چاہیے</h2><p class="c">${g?'فون کی گوگل آواز والی ایپ کو مائک کی اجازت دینی ہے۔ نیچے Google Go کھولیں، وہاں مائک دبائیں، "While using the app" دبائیں اور واپس آ جائیں۔':'اوپر 🔒 دبائیں ← Permissions ← Microphone ← Allow۔ پھر نیچے "دوبارہ کوشش" دبائیں۔'}</p><button class="btn grn" onclick="allowMic()">✅ دوبارہ کوشش</button>${g?'<a class="btn" style="text-align:center" href="intent:#Intent;package=com.google.android.apps.searchlite;end" onclick="waitBack=true">🔎 Google Go کھولیں</a>':''}<button class="btn lite" onclick="closeSheet()">❌ بند کریں</button>`)}
+// اجازت کی حالت: ملی ہو تو سیدھا چلے، ورنہ Chrome کا "Allow" پاپ اپ خود آئے
+async function micOK(){
+  try{if(navigator.permissions){const p=await navigator.permissions.query({name:'microphone'});if(p.state=='granted')return 1;if(p.state=='denied')return 0}}catch(e){}
+  try{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop());return 1}catch(e){return 0}}
 async function allowMic(){
   try{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop());closeSheet();if(pend)mic(null,pend)}
-  catch(e){toast('اجازت نہیں ملی، نیچے والی ترتیب دیکھیں')}}
-function mic(btn,fn){
+  catch(e){toast('اجازت نہیں ملی')}}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&waitBack){waitBack=false;closeSheet();if(pend)setTimeout(()=>mic(null,pend),400)}});
+async function mic(btn,fn){
   if(!SR)return toast('اس براؤزر میں مائک نہیں چلتا');
-  if(rec)return stopMic();
+  if(rec){if(Date.now()-micT>800)stopMic();return}
+  if(micLock)return;
   if(!navigator.onLine)return toast('مائک کے لیے انٹرنیٹ چاہیے۔ ٹائپ کر لیں');
-  listen(btn,fn,0)}
+  micLock=1;
+  try{
+    if(window.speechSynthesis&&speechSynthesis.speaking){speechSynthesis.cancel();await new Promise(r=>setTimeout(r,250))}
+    if(!await micOK())return permSheet(fn,'blocked');
+    listen(btn,fn,0)}
+  finally{micLock=0}}
 function listen(btn,fn,tried){
-  const r=new SR();r.lang='ur-PK';r.interimResults=true;rec=r;let txt='';
+  const r=new SR();r.lang='ur-PK';r.interimResults=true;r.continuous=false;r.maxAlternatives=1;rec=r;micT=Date.now();let txt='';
+  const wd=setTimeout(()=>{if(rec===r)cancelMic()},20000);
+  const fin=()=>{clearTimeout(wd);if(btn)btn.classList.remove('on')};
   r.onresult=e=>{txt='';for(const x of e.results)txt+=x[0].transcript;showMic(txt)};
-  r.onend=()=>{if(btn)btn.classList.remove('on');if(rec!==r)return;rec=null;hideMic();if(txt.trim())fn(txt.trim())};
-  r.onerror=async e=>{if(rec!==r)return;
-    if(e.error=='not-allowed'&&!tried){rec=null;try{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop());return listen(btn,fn,1)}catch(x){}}
-    if(rec===r)rec=null;txt='';hideMic();if(btn)btn.classList.remove('on');
-    if(e.error=='not-allowed'||e.error=='service-not-allowed'||!e.error)permSheet(fn);
-    else toast(e.error=='network'?'مائک کو انٹرنیٹ چاہیے':e.error=='no-speech'?'آواز نہیں آئی، دوبارہ دبائیں':'آواز سمجھ نہیں آئی')};
+  r.onend=()=>{fin();if(rec!==r)return;rec=null;hideMic();if(txt.trim())fn(txt.trim());else toast('آواز نہیں آئی، دوبارہ دبائیں')};
+  r.onerror=async e=>{if(rec!==r)return;fin();rec=null;hideMic();const c=e.error;
+    if(c=='aborted')return;
+    if(c=='not-allowed'&&!tried){if(await micOK())return listen(btn,fn,1)}
+    if(c=='not-allowed')return permSheet(fn,'blocked');
+    if(c=='service-not-allowed')return permSheet(fn,'google');
+    toast(c=='network'?'مائک کو انٹرنیٹ چاہیے':c=='no-speech'?'آواز نہیں آئی، دوبارہ دبائیں':'آواز سمجھ نہیں آئی')};
   if(btn)btn.classList.add('on');showMic('');
-  try{r.start()}catch(x){rec=null;hideMic()}}
+  try{r.start()}catch(x){fin();rec=null;hideMic();toast('دوبارہ دبائیں')}}
 function fill(id,t,numeric){
   const i=$('#'+id);if(!i)return;
-  if(numeric){const d=en(t).replace(/[^\d]/g,'');if(d)i.value=d;else toast('رقم سمجھ نہیں آئی، دوبارہ بولیں')}
+  if(numeric){let d=en(t).replace(/[^\d]/g,'');if(!d){const n=w2n(t);if(n)d=String(n)}if(d)i.value=d;else toast('رقم سمجھ نہیں آئی، دوبارہ بولیں')}
   else i.value+=(i.value?' ':'')+t.replace(/[.۔]+$/,'')}
-function searchSet(t){if(/آج/.test(t)&&/بیچ|رپورٹ|سودا|چیز/.test(t))return report();q=t.replace(/[.۔]+$/,'');const i=$('#srch');if(i)i.value=q;const l=$('#cl');if(l)l.innerHTML=cl_html()}
+function searchSet(t){if(/آج/.test(t)&&/بیچ|رپورٹ|سودا|چیز|فروخت|بچت/.test(t))return report();q=t.replace(/[.۔]+$/,'');const i=$('#srch');if(i)i.value=q;const l=$('#cl');if(l)l.innerHTML=cl_html()}
 
 // کیلکولیٹر
 let cx='';
@@ -332,17 +364,38 @@ function morning(){
   if(!l.length)return speak('کوئی پرانا ادھار نہیں ہے');
   speak(l.map(c=>c.name+' نے '+num(bs[c.id])+' روپے نہیں دیے، '+daysDiff(acc(c.id).start)+' دن ہو گئے').join('۔ '))}
 
-// آج کی رپورٹ (بٹن یا بول کر: "آج میں نے کتنی چیزیں بیچیں")
-function report(){
+// آج کی رپورٹ: فروخت، بچت، ادھار، وصولی، کل بقایا (کھلتے ہی بولتی ہے، 🎤 بٹن سے دوبارہ)
+function report(sp){
   const t0=new Date().setHours(0,0,0,0),nm=id=>{const c=custs.find(x=>x.id==id);return c?c.name:''};
   const es=ents.filter(e=>!e.del&&e.ts>=t0).sort((a,b)=>b.ts-a.ts),D=es.filter(e=>e.type=='d'),L=es.filter(e=>e.type=='l'),td=sum(D),tl=sum(L);
-  window.repT=es.length?'آج '+D.length+' ادھار میں '+num(td)+' روپے کا سامان گیا اور '+num(tl)+' روپے وصول ہوئے':'آج ابھی کوئی انٹری نہیں ہوئی';
+  const S=sales.filter(s=>!s.del&&s.ts>=t0).sort((a,b)=>b.ts-a.ts),ts=sum(S),tp=S.reduce((a,s)=>a+(s.profit||0),0);
+  const bs=balMap();let all=0;custs.forEach(c=>{if(!c.del&&bs[c.id]>0)all+=bs[c.id]});
+  window.repT='آج فروخت '+num(ts)+' روپے رہی اور بچت '+num(tp)+' روپے ہوئی۔ '+(D.length?'ادھار '+D.length+' بار دیا، کل '+num(td)+' روپے کا۔ ':'آج کوئی ادھار نہیں دیا۔ ')+(tl?num(tl)+' روپے وصول ہوئے۔ ':'')+'سب گاہکوں کا کل بقایا '+num(all)+' روپے ہے';
+  const bx=(l,v,c)=>`<div class="bx" style="background:#f1f5f9"><small>${l}</small><b class="${c||''}">${num(v)}</b></div>`;
+  const tm=t=>new Date(t).toTimeString().slice(0,5);
   sheet(`<h2 class="c">📊 آج کی رپورٹ<br><small>${fmt(Date.now())}</small></h2>
-  <div class="b3"><div class="bx" style="background:#f1f5f9"><small>ادھار دیا (${D.length})</small><b class="r">${num(td)}</b></div><div class="bx" style="background:#f1f5f9"><small>وصول (${L.length})</small><b class="g">${num(tl)}</b></div></div>
-  ${es.map(e=>`<div class="card ent ${e.type=='d'?'rd':'gr'}"><div><div class="ea ${e.type=='d'?'r':'g'}">${esc(nm(e.cid))} — ${num(e.amt)}</div>${e.note?'<div>'+esc(e.note)+'</div>':''}</div><small>${new Date(e.ts).toTimeString().slice(0,5)}</small></div>`).join('')||'<div class="empty">آج ابھی کوئی انٹری نہیں</div>'}
-  <p class="c sub"><small>نقد بِکری آواز سے سودا والے مرحلے میں شامل ہوگی</small></p>
-  <button class="btn grn" onclick="speak(repT)">🔊 رپورٹ سنیں</button><button class="btn lite" onclick="closeSheet()">❌ بند کریں</button>`);
-  speak(repT)}
+  <div class="b3">${bx('فروخت ('+S.length+')',ts)}${bx('آج کی بچت',tp,'g')}${bx('ادھار دیا ('+D.length+')',td,'r')}${bx('وصول ('+L.length+')',tl,'g')}<div class="bx big"><small>سب گاہکوں کا کل بقایا (لینے ہیں)</small><b>${num(all)}</b></div></div>
+  <button class="btn grn" onclick="speak(repT)">🎤 رپورٹ سنائیں</button>
+  ${S.map(s=>`<div class="card ent gr"><div><div class="ea g">💰 فروخت ${num(s.amt)} — بچت ${num(s.profit||0)}</div>${s.note?'<div>'+esc(s.note)+'</div>':''}<small>${tm(s.ts)}</small></div><button class="del" onclick="delSale('${s.id}')">🗑️</button></div>`).join('')}
+  ${es.map(e=>`<div class="card ent ${e.type=='d'?'rd':'gr'}"><div><div class="ea ${e.type=='d'?'r':'g'}">${esc(nm(e.cid))} — ${e.type=='d'?'ادھار':'وصول'} ${num(e.amt)}</div>${e.note?'<div>'+esc(e.note)+'</div>':''}</div><small>${tm(e.ts)}</small></div>`).join('')}
+  ${S.length+es.length?'':'<div class="empty">آج ابھی کوئی انٹری نہیں</div>'}
+  <button class="btn lite" onclick="closeSheet()">❌ بند کریں</button>`);
+  if(sp!==false)speak(repT)}
+
+// آج کی فروخت اور بچت لکھنا
+function saleSheet(){
+  sheet(`<h2 class="c g">💰 آج کی فروخت</h2>
+  <div class="row"><input id="am" class="in" type="tel" inputmode="numeric" placeholder="فروخت (روپے)"><button class="mic" onclick="mic(this,s=>fill('am',s,1))">🎤</button><button class="mic" onclick="calc()">🧮</button></div>
+  <div class="row"><input id="pf" class="in" type="tel" inputmode="numeric" placeholder="بچت / منافع (روپے)"><button class="mic" onclick="mic(this,s=>fill('pf',s,1))">🎤</button></div>
+  <div class="row"><input id="nt" class="in" maxlength="60" placeholder="تفصیل (اختیاری)"><button class="mic" onclick="mic(this,s=>fill('nt',s))">🎤</button></div>
+  <button class="btn grn" onclick="saveSale()">✅ محفوظ کریں</button><button class="btn lite" onclick="closeSheet()">❌ بند کریں</button>`);focus('am')}
+function saveSale(){
+  const a=parseInt(en($('#am').value||'').replace(/[^\d]/g,'')),p=parseInt(en($('#pf').value||'').replace(/[^\d]/g,''))||0;
+  if(!a||a<=0)return toast('فروخت کی رقم لکھیں');
+  if(p>a)return toast('بچت فروخت سے زیادہ نہیں ہو سکتی');
+  db.collection('users/'+uid+'/sales').add({amt:a,profit:p,note:$('#nt').value.trim(),ts:Date.now(),del:false});
+  closeSheet();speak('فروخت '+num(a)+' روپے، بچت '+num(p)+' روپے محفوظ ہو گئی');toast('✅ محفوظ ہو گیا')}
+function delSale(id){ask('اس فروخت کو ڈیلیٹ کریں؟','🗑️ ہاں، ڈیلیٹ',()=>{const s=sales.find(x=>x.id==id);if(s)s.del=true;db.doc('users/'+uid+'/sales/'+id).update({del:true,delAt:Date.now()});report(false)})}
 
 // فہرست
 function listHTML(anim){
@@ -355,7 +408,7 @@ function listHTML(anim){
   </div><div class="wrap"><div class="row" style="margin-bottom:8px">
   <input class="in" id="srch" placeholder="🔍 گاہک ڈھونڈیں" value="${esc(q)}" oninput="q=this.value;$('#cl').innerHTML=cl_html()" style="margin:0">
   <button class="mic" onclick="mic(this,searchSet)">🎤</button></div><div id="cl">${cl_html()}</div></div>
-  <div class="fix"><button class="btn" onclick="addCust()">➕ نیا گاہک شامل کریں</button></div>${footerHTML()}</div>`}
+  <div class="fix"><div class="row"><button class="btn" onclick="addCust()">➕ نیا گاہک</button><button class="btn grn" onclick="saleSheet()">💰 آج کی فروخت</button></div></div>${footerHTML()}</div>`}
 function cl_html(){
   const bs=balMap(),all=custs.filter(c=>!c.del);
   const l=all.filter(c=>c.name.includes(q.trim())).sort((a,b)=>(bs[b.id]||0)-(bs[a.id]||0)||a.name.localeCompare(b.name));
@@ -437,6 +490,7 @@ function permC(id){ask('گاہک ہمیشہ کے لیے ختم کریں؟','🗑
 function purge(){
   const n=Date.now(),P='users/'+uid,b=db.batch();let c=0;
   ents.forEach(e=>{if(c<400&&e.del&&e.delAt&&n-e.delAt>30*DAY){b.delete(db.doc(P+'/entries/'+e.id));c++}});
+  sales.forEach(s=>{if(c<400&&s.del&&s.delAt&&n-s.delAt>30*DAY){b.delete(db.doc(P+'/sales/'+s.id));c++}});
   custs.forEach(x=>{if(c<400&&x.del&&x.delAt&&n-x.delAt>30*DAY){b.delete(db.doc(P+'/customers/'+x.id));c++;ents.filter(e=>e.cid==x.id).forEach(e=>{if(c<450){b.delete(db.doc(P+'/entries/'+e.id));c++}})}});
   if(c)b.commit().catch(()=>{})}
 
@@ -464,11 +518,11 @@ async function doReset(id){
   busy(1);er('');
   try{
     const pd=await adb.doc('phones/'+u.phone).get(),ver=(pd.exists?pd.data().v:1)+1;
-    const old=await Promise.all(['customers','entries'].map(k=>adb.collection('users/'+id+'/'+k).get()));
+    const old=await Promise.all(['customers','entries','sales'].map(k=>adb.collection('users/'+id+'/'+k).get()));
     const RA=firebase.initializeApp(CFG,'r'+Date.now()),ra=RA.auth(),rd=RA.firestore();
     const c=await ra.createUserWithEmailAndPassword(mail(u.phone,ver),pin),nu=c.user.uid;
     await rd.doc('users/'+nu).set({name:u.name,phone:u.phone,createdAt:TSP.fromMillis((u.createdAt?u.createdAt.toMillis():Date.now())+1),paidUntil:u.paidUntil||TSP.fromMillis(Date.now()+30*DAY),lastSeen:FV.serverTimestamp()});
-    const docs=[];old[0].forEach(d=>docs.push(['customers',d]));old[1].forEach(d=>docs.push(['entries',d]));
+    const docs=[];old[0].forEach(d=>docs.push(['customers',d]));old[1].forEach(d=>docs.push(['entries',d]));old[2].forEach(d=>docs.push(['sales',d]));
     for(let i=0;i<docs.length;i+=400){const b=rd.batch();docs.slice(i,i+400).forEach(([k,d])=>b.set(rd.doc('users/'+nu+'/'+k+'/'+d.id),d.data()));await b.commit()}
     await rd.doc('phones/'+u.phone).set({v:ver,uid:nu});
     await ra.signOut();RA.delete().catch(()=>{});
@@ -487,10 +541,11 @@ function tog(id,op){ask(op?'یہ کھاتہ 30 دن کے لیے کھولیں؟':
 
 // شروع
 function userStart(u){
-  uid=u.uid;custs=[];ents=[];view={n:'list'};q='';first=true;me=null;render();const P='users/'+uid;
+  uid=u.uid;custs=[];ents=[];sales=[];view={n:'list'};q='';first=true;me=null;render();const P='users/'+uid;
   unsubs=[db.doc(P).onSnapshot(s=>{me=s.data()||null;render(first&&!!me);if(me)first=false}),
   db.collection(P+'/customers').onSnapshot(s=>{custs=s.docs.map(d=>({id:d.id,...d.data()}));if(me)render(false)}),
-  db.collection(P+'/entries').onSnapshot(s=>{ents=s.docs.map(d=>({id:d.id,...d.data()}));if(me)render(false)})];
+  db.collection(P+'/entries').onSnapshot(s=>{ents=s.docs.map(d=>({id:d.id,...d.data()}));if(me)render(false)}),
+  db.collection(P+'/sales').onSnapshot(s=>{sales=s.docs.map(d=>({id:d.id,...d.data()}));if(me)render(false)},()=>{})];
   sync();setTimeout(purge,6000)}
 
 if(ADM){
