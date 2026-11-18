@@ -1,5 +1,5 @@
-const V='bk-v4';
-const PRE=['./','index.html','manifest.json','icon-192.png','jameel.ttf'];
+const V='bk-v5';
+const PRE=['./','index.html','manifest.json','icon-192.png','icon-512.png','logo.png','jameel.ttf'];
 const EXT=['https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js','https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js','https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js','https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400..700&family=Gulzar&display=swap'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(async c=>{
   await Promise.all(PRE.map(u=>c.add(u).catch(()=>{})));
