@@ -10,6 +10,16 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400..700&family=Gulzar&display=swap" rel="stylesheet">
 <title>ببلو کھاتا</title>
+  .stage{perspective:900px;height:240px}
+.coin{--s:190px;width:var(--s);height:var(--s)}
+.f{background:radial-gradient(circle at 30% 25%,#2a2a2a,#000 65%)!important;box-shadow:inset 0 0 0 7px #fbbf24,inset 0 0 0 11px #92400e!important;padding:0!important}
+.f b{display:block;font-size:30px!important;color:#fde68a;text-shadow:0 0 8px #fbbf24,0 0 18px #f59e0b;line-height:1.7}
+.nb{display:none}
+.top .row>div>b{font-size:30px!important}
+.mini-coin{position:relative;width:76px;height:76px;background:#000;box-shadow:inset 0 0 0 4px #fbbf24,inset 0 0 0 6px #92400e;transform-style:preserve-3d}
+.mini-coin::before,.mini-coin::after{content:"چمکدار\Aببلو کھاتا";white-space:pre;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;line-height:1.5;color:#fde68a;text-shadow:0 0 6px #fbbf24;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.mini-coin::after{transform:translateZ(2px)}
+.mini-coin::before{transform:rotateY(180deg) translateZ(2px)}
 <style>
 @font-face{font-family:'Jameel';src:local('Jameel Noori Nastaleeq'),url('jameel.ttf')}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -565,6 +575,30 @@ if(ADM){
   setInterval(()=>{if(me&&uid&&expired()!=showFee)render(false)},30000)}
 addEventListener('hashchange',()=>location.reload());
 if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+  <script>
+function coinHTML(){
+  const face='<b>چمکدار</b><b>ببلو کھاتا</b>';
+  return `<div class="coin">${[-6,-4,-2,0,2,4,6].map(z=>`<div class="e" style="transform:translateZ(${z}px)"></div>`).join('')}<div class="f fr">${face}</div><div class="f bk">${face}</div></div>`}
+
+function permSheet(fn){pend=fn;
+  sheet(`<h2 class="c">🎤 اجازت چاہیے</h2><p class="c">اوپر 🔒 دبائیں ← Permissions ← Reset permissions دبائیں۔ پھر نیچے "دوبارہ کوشش" دبائیں اور جب فون پوچھے تو Allow کر دیں۔</p><button class="btn grn" onclick="allowMic()">✅ دوبارہ کوشش</button><button class="btn lite" onclick="closeSheet()">❌ بند کریں</button>`)}
+
+async function micOK(){
+  try{if(navigator.permissions){const p=await navigator.permissions.query({name:'microphone'});if(p.state=='granted')return 1}}catch(e){}
+  try{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop());return 1}catch(e){return 0}}
+
+async function mic(btn,fn){
+  if(!SR)return toast('اس براؤزر میں مائک نہیں چلتا');
+  if(rec){if(Date.now()-micT>800)stopMic();return}
+  if(micLock)return;
+  if(!navigator.onLine)return toast('مائک کے لیے انٹرنیٹ چاہیے۔ ٹائپ کر لیں');
+  micLock=1;
+  try{
+    if(!await micOK())return permSheet(fn);
+    if(window.speechSynthesis&&speechSynthesis.speaking){speechSynthesis.cancel();await new Promise(r=>setTimeout(r,250))}
+    listen(btn,fn,0)}
+  finally{micLock=0}}
 </script>
 </body>
 </html>
