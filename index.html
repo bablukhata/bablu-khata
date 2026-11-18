@@ -116,6 +116,13 @@ a{color:inherit;text-decoration:none}
 .kp .cl{background:#fee2e2;color:#b91c1c}
 .kp .eq{background:#0f766e;color:#fff}
 .kp .w2{grid-column:span 2}
+.btn.org{background:#ea580c;box-shadow:0 4px 0 #c2410c}
+@keyframes wv{50%{height:46px}}
+#mc .ov{z-index:40}
+.wv{display:flex;justify-content:center;align-items:center;gap:7px;height:52px}
+.wv i{width:9px;height:12px;border-radius:6px;background:linear-gradient(#14b8a6,#0f766e);animation:wv 1s ease-in-out infinite}
+.wv i:nth-child(2){animation-delay:.15s}.wv i:nth-child(3){animation-delay:.3s}.wv i:nth-child(4){animation-delay:.45s}.wv i:nth-child(5){animation-delay:.6s}
+.mt{font-size:32px;line-height:2.4;min-height:90px;color:#0f766e;padding:4px 6px;word-break:break-word}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important}}
 </style>
 </head>
@@ -123,6 +130,7 @@ a{color:inherit;text-decoration:none}
 <div id="app"></div>
 <div id="sheet"></div>
 <div id="calc"></div>
+<div id="mc"></div>
 <div id="toast"></div>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -173,26 +181,35 @@ function speak(t){
   if(!window.speechSynthesis)return toast('یہ فون آواز نہیں دے سکتا');
   speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='ur-PK';u.rate=.9;speechSynthesis.speak(u)}
 
-// مائک: پہلے اجازت صاف مانگتا ہے
+// مائک: خوبصورت اردو اسکرین، اجازت صاف مانگتا ہے
 let rec=null;
-async function mic(btn,fn){
-  const R=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!R)return toast('اس براؤزر میں مائک نہیں چلتا۔ کی بورڈ کا مائک 🎤 استعمال کریں');
-  if(rec){try{rec.stop()}catch(x){}rec=null;return}
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+function showMic(t){if(!$('#mt'))$('#mc').innerHTML=`<div class="ov"><div class="box c"><div class="wv"><i></i><i></i><i></i><i></i><i></i></div><h2>🎤 بولیں</h2><div id="mt" class="mt"></div><button class="btn grn" onclick="stopMic()">✅ بول لیا</button><button class="btn lite" onclick="cancelMic()">❌ بند کریں</button></div></div>`;$('#mt').textContent=t||'سن رہا ہوں...'}
+function hideMic(){$('#mc').innerHTML=''}
+function stopMic(){if(rec)try{rec.stop()}catch(x){}}
+function cancelMic(){const r=rec;rec=null;if(r)try{r.abort()}catch(x){}hideMic()}
+function permSheet(){sheet(`<h2 class="c">🎤 مائک کی اجازت چاہیے</h2><p class="c">اوپر ⋮ یا 🔒 دبائیں ← اجازتیں (Permissions) ← Microphone ← اجازت دیں (Allow)۔<br>ایپ ہوم اسکرین والی ہو تو یہی لنک Chrome میں کھول کر اجازت دیں۔</p><button class="btn" onclick="closeSheet()">✅ ٹھیک ہے</button>`)}
+function mic(btn,fn){
+  if(!SR)return toast('اس براؤزر میں مائک نہیں چلتا');
+  if(rec)return stopMic();
   if(!navigator.onLine)return toast('مائک کے لیے انٹرنیٹ چاہیے۔ ٹائپ کر لیں');
-  try{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop())}
-  catch(e){return sheet(`<h2 class="c">🎤 مائک کی اجازت چاہیے</h2><p class="c">اوپر ⋮ یا 🔒 دبائیں ← اجازتیں (Permissions) ← Microphone ← اجازت دیں (Allow)۔<br>ایپ ہوم اسکرین والی ہو تو یہی لنک Chrome میں کھول کر اجازت دیں۔</p><button class="btn" onclick="closeSheet()">✅ ٹھیک ہے</button>`)}
-  const r=new R();r.lang='ur-PK';rec=r;
-  r.onresult=e=>fn(e.results[0][0].transcript);
-  r.onend=()=>{if(btn)btn.classList.remove('on');rec=null};
-  r.onerror=e=>{if(btn)btn.classList.remove('on');rec=null;toast(e.error=='network'?'مائک کو انٹرنیٹ چاہیے':e.error=='not-allowed'?'مائک کی اجازت دیں':'آواز سمجھ نہیں آئی')};
-  if(btn)btn.classList.add('on');toast('🎤 بولیں...');
-  try{r.start()}catch(x){if(btn)btn.classList.remove('on');rec=null}}
+  listen(btn,fn,0)}
+function listen(btn,fn,tried){
+  const r=new SR();r.lang='ur-PK';r.interimResults=true;rec=r;let txt='';
+  r.onresult=e=>{txt='';for(const x of e.results)txt+=x[0].transcript;showMic(txt)};
+  r.onend=()=>{if(btn)btn.classList.remove('on');if(rec!==r)return;rec=null;hideMic();if(txt.trim())fn(txt.trim())};
+  r.onerror=async e=>{if(rec!==r)return;
+    if(e.error=='not-allowed'&&!tried){rec=null;try{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop());return listen(btn,fn,1)}catch(x){}}
+    if(rec===r)rec=null;txt='';hideMic();if(btn)btn.classList.remove('on');
+    if(e.error=='not-allowed'||e.error=='service-not-allowed'||!e.error)permSheet();
+    else toast(e.error=='network'?'مائک کو انٹرنیٹ چاہیے':e.error=='no-speech'?'آواز نہیں آئی، دوبارہ دبائیں':'آواز سمجھ نہیں آئی')};
+  if(btn)btn.classList.add('on');showMic('');
+  try{r.start()}catch(x){rec=null;hideMic()}}
 function fill(id,t,numeric){
   const i=$('#'+id);if(!i)return;
   if(numeric){const d=en(t).replace(/[^\d]/g,'');if(d)i.value=d;else toast('رقم سمجھ نہیں آئی، دوبارہ بولیں')}
   else i.value+=(i.value?' ':'')+t.replace(/[.۔]+$/,'')}
-function searchSet(t){q=t.replace(/[.۔]+$/,'');const i=$('#srch');if(i)i.value=q;const l=$('#cl');if(l)l.innerHTML=cl_html()}
+function searchSet(t){if(/آج/.test(t)&&/بیچ|رپورٹ|سودا|چیز/.test(t))return report();q=t.replace(/[.۔]+$/,'');const i=$('#srch');if(i)i.value=q;const l=$('#cl');if(l)l.innerHTML=cl_html()}
 
 // کیلکولیٹر
 let cx='';
@@ -300,6 +317,18 @@ function morning(){
   if(!l.length)return speak('کوئی پرانا ادھار نہیں ہے');
   speak(l.map(c=>c.name+' نے '+num(bs[c.id])+' روپے نہیں دیے، '+daysDiff(acc(c.id).start)+' دن ہو گئے').join('۔ '))}
 
+// آج کی رپورٹ (بٹن یا بول کر: "آج میں نے کتنی چیزیں بیچیں")
+function report(){
+  const t0=new Date().setHours(0,0,0,0),nm=id=>{const c=custs.find(x=>x.id==id);return c?c.name:''};
+  const es=ents.filter(e=>!e.del&&e.ts>=t0).sort((a,b)=>b.ts-a.ts),D=es.filter(e=>e.type=='d'),L=es.filter(e=>e.type=='l'),td=sum(D),tl=sum(L);
+  window.repT=es.length?'آج '+D.length+' ادھار میں '+num(td)+' روپے کا سامان گیا اور '+num(tl)+' روپے وصول ہوئے':'آج ابھی کوئی انٹری نہیں ہوئی';
+  sheet(`<h2 class="c">📊 آج کی رپورٹ<br><small>${fmt(Date.now())}</small></h2>
+  <div class="b3"><div class="bx" style="background:#f1f5f9"><small>ادھار دیا (${D.length})</small><b class="r">${num(td)}</b></div><div class="bx" style="background:#f1f5f9"><small>وصول (${L.length})</small><b class="g">${num(tl)}</b></div></div>
+  ${es.map(e=>`<div class="card ent ${e.type=='d'?'rd':'gr'}"><div><div class="ea ${e.type=='d'?'r':'g'}">${esc(nm(e.cid))} — ${num(e.amt)}</div>${e.note?'<div>'+esc(e.note)+'</div>':''}</div><small>${new Date(e.ts).toTimeString().slice(0,5)}</small></div>`).join('')||'<div class="empty">آج ابھی کوئی انٹری نہیں</div>'}
+  <p class="c sub"><small>نقد بِکری آواز سے سودا والے مرحلے میں شامل ہوگی</small></p>
+  <button class="btn grn" onclick="speak(repT)">🔊 رپورٹ سنیں</button><button class="btn lite" onclick="closeSheet()">❌ بند کریں</button>`);
+  speak(repT)}
+
 // فہرست
 function listHTML(anim){
   const bs=balMap();let tot=0;custs.forEach(c=>{if(!c.del&&(bs[c.id]||0)>0)tot+=bs[c.id]});
@@ -307,7 +336,7 @@ function listHTML(anim){
   <div class="row"><div><small>دکاندار</small><br><b style="font-size:21px"><span class="mini-coin"></span> ${esc(me.name)}</b></div>
   <div class="row"><button class="ib" onclick="calc()">🧮<small>حساب</small></button><button class="ib" onclick="go({n:'trash'})">🗑️<small>ڈیلیٹ</small></button><button class="ib" onclick="logout()">🚪<small>باہر</small></button></div></div>
   <div class="tot"><small>کل بقایا (لینے ہیں)</small><div class="amt" data-v="${tot}">${num(tot)}</div></div>
-  <div class="row" style="margin-top:6px"><button class="ib" style="flex:1;font-size:16px" onclick="speakTot()">🔊 بقایا سنیں</button><button class="ib" style="flex:1;font-size:16px" onclick="morning()">📢 پرانے ادھار سنیں</button></div>
+  <div class="row" style="margin-top:6px"><button class="ib" style="flex:1;font-size:16px" onclick="speakTot()">🔊 بقایا</button><button class="ib" style="flex:1;font-size:16px" onclick="morning()">📢 پرانے</button><button class="ib" style="flex:1.5;font-size:16px" onclick="report()">📊 آج کی رپورٹ</button></div>
   </div><div class="wrap"><div class="row" style="margin-bottom:8px">
   <input class="in" id="srch" placeholder="🔍 گاہک ڈھونڈیں" value="${esc(q)}" oninput="q=this.value;$('#cl').innerHTML=cl_html()" style="margin:0">
   <button class="mic" onclick="mic(this,searchSet)">🎤</button></div><div id="cl">${cl_html()}</div></div>
@@ -411,6 +440,25 @@ async function adminLogin(){busy(1);er('');try{await aauth.signInWithEmailAndPas
 function adminStart(){
   $('#app').innerHTML='<div class="page c" style="padding-top:60px"><div style="font-size:60px">🛠️</div><h2>⏳</h2></div>';
   unsubs=[adb.collection('users').onSnapshot(s=>{users=s.docs.map(d=>({id:d.id,...d.data()}));adminRender()},e=>toast(em(e)))]}
+// پن ری سیٹ: نیا لاگ ان بنتا ہے اور پرانا سارا ڈیٹا اس میں منتقل ہوتا ہے
+function resetPin(id){const u=users.find(x=>x.id==id);if(!u)return;
+  sheet(`<h2 class="c">🔑 ${esc(u.name)} کا نیا پن</h2><input id="np" class="in" type="tel" inputmode="numeric" maxlength="6" placeholder="نیا پن (6 ہندسے)"><div id="er" class="er"></div><button id="go" class="btn org" onclick="doReset('${id}')">✅ پن بدلیں</button><button class="btn lite" onclick="closeSheet()">❌ بند کریں</button>`);focus('np')}
+async function doReset(id){
+  const u=users.find(x=>x.id==id),pin=en($('#np').value||'').trim();
+  if(!/^\d{6}$/.test(pin))return er('پن 6 ہندسوں کا لکھیں');
+  busy(1);er('');
+  try{
+    const pd=await adb.doc('phones/'+u.phone).get(),ver=(pd.exists?pd.data().v:1)+1;
+    const old=await Promise.all(['customers','entries'].map(k=>adb.collection('users/'+id+'/'+k).get()));
+    const RA=firebase.initializeApp(CFG,'r'+Date.now()),ra=RA.auth(),rd=RA.firestore();
+    const c=await ra.createUserWithEmailAndPassword(mail(u.phone,ver),pin),nu=c.user.uid;
+    await rd.doc('users/'+nu).set({name:u.name,phone:u.phone,createdAt:TSP.fromMillis((u.createdAt?u.createdAt.toMillis():Date.now())+1),paidUntil:u.paidUntil||TSP.fromMillis(Date.now()+30*DAY),lastSeen:FV.serverTimestamp()});
+    const docs=[];old[0].forEach(d=>docs.push(['customers',d]));old[1].forEach(d=>docs.push(['entries',d]));
+    for(let i=0;i<docs.length;i+=400){const b=rd.batch();docs.slice(i,i+400).forEach(([k,d])=>b.set(rd.doc('users/'+nu+'/'+k+'/'+d.id),d.data()));await b.commit()}
+    await rd.doc('phones/'+u.phone).set({v:ver,uid:nu});
+    await ra.signOut();RA.delete().catch(()=>{});
+    closeSheet();toast('✅ نیا پن: '+pin+' (دکاندار کو بتا دیں)')
+  }catch(e){busy(0);er((e.code||'').includes('permission')?'Firebase Rules میں ایڈمن کو اجازت دیں':em(e))}}
 let adminAnim=true;
 function adminRender(){
   const n=Date.now(),t0=new Date().setHours(0,0,0,0),cm=u=>u.createdAt?u.createdAt.toMillis():n,pu=u=>u.paidUntil?u.paidUntil.toMillis():0,ex=u=>pu(u)<n;
@@ -418,7 +466,7 @@ function adminRender(){
   $('#app').innerHTML=`<div class="page${adminAnim?' anim':''}"><div class="top"><div class="row"><b style="font-size:21px">🛠️ ایڈمن پینل</b><button class="ib" onclick="aauth.signOut()">🚪<small>باہر</small></button></div>
   <div class="st"><div>کل دکاندار<b>${l.length}</b></div><div>آج کے نئے<b>${l.filter(u=>cm(u)>=t0).length}</b></div><div>فیس باقی<b>${l.filter(ex).length}</b></div></div></div><div class="wrap">
   ${l.map((u,i)=>`<div class="card col" style="--d:${Math.min(i,8)*.05}s"><div><div class="nm">👤 ${esc(u.name)}</div><a href="tel:${esc(u.phone)}" dir="ltr" style="text-align:right;font-size:18px">📞 ${esc(u.phone)}</a><div><small>📅 ${fmt(cm(u))} — ${ex(u)?'🔴 بند':'🟢 کھلا ('+Math.ceil((pu(u)-n)/DAY)+' دن باقی)'}</small></div></div>
-  <button class="btn ${ex(u)?'grn':'red'}" onclick="tog('${u.id}',${ex(u)})">${ex(u)?'🟢 کھاتہ کھولیں (30 دن)':'🔴 کھاتہ بند کریں'}</button></div>`).join('')||'<div class="empty">ابھی کوئی دکاندار نہیں</div>'}
+  <button class="btn ${ex(u)?'grn':'red'}" onclick="tog('${u.id}',${ex(u)})">${ex(u)?'🟢 کھاتہ کھولیں (30 دن)':'🔴 کھاتہ بند کریں'}</button><button class="btn org" onclick="resetPin('${u.id}')">🔑 پن ری سیٹ</button></div>`).join('')||'<div class="empty">ابھی کوئی دکاندار نہیں</div>'}
   </div>${footerHTML()}</div>`;adminAnim=false}
 function tog(id,op){ask(op?'یہ کھاتہ 30 دن کے لیے کھولیں؟':'یہ کھاتہ بند کریں؟',op?'🟢 ہاں، کھولیں':'🔴 ہاں، بند کریں',()=>adb.doc('users/'+id).update({paidUntil:TSP.fromMillis(op?Date.now()+30*DAY:Date.now()-1000)}),op?'grn':'red')}
 
