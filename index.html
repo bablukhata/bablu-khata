@@ -10,16 +10,6 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400..700&family=Gulzar&display=swap" rel="stylesheet">
 <title>ببلو کھاتا</title>
-  .stage{perspective:900px;height:240px}
-.coin{--s:190px;width:var(--s);height:var(--s)}
-.f{background:radial-gradient(circle at 30% 25%,#2a2a2a,#000 65%)!important;box-shadow:inset 0 0 0 7px #fbbf24,inset 0 0 0 11px #92400e!important;padding:0!important}
-.f b{display:block;font-size:30px!important;color:#fde68a;text-shadow:0 0 8px #fbbf24,0 0 18px #f59e0b;line-height:1.7}
-.nb{display:none}
-.top .row>div>b{font-size:30px!important}
-.mini-coin{position:relative;width:76px;height:76px;background:#000;box-shadow:inset 0 0 0 4px #fbbf24,inset 0 0 0 6px #92400e;transform-style:preserve-3d}
-.mini-coin::before,.mini-coin::after{content:"چمکدار\Aببلو کھاتا";white-space:pre;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;line-height:1.5;color:#fde68a;text-shadow:0 0 6px #fbbf24;backface-visibility:hidden;-webkit-backface-visibility:hidden}
-.mini-coin::after{transform:translateZ(2px)}
-.mini-coin::before{transform:rotateY(180deg) translateZ(2px)}
 <style>
 @font-face{font-family:'Jameel';src:local('Jameel Noori Nastaleeq'),url('jameel.ttf')}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -114,17 +104,22 @@ a{color:inherit;text-decoration:none}
 .footer{text-align:center;padding:16px 10px 8px;color:#64748b;font-size:14px;line-height:2.2;border-top:1px solid #e2e8f0;margin-top:20px}
 .footer b{color:#0f766e;font-size:17px}
 .footer a{color:#0f766e}
-.stage{perspective:800px;height:180px;display:flex;justify-content:center;align-items:center;margin-top:10px}
+/* سکہ: بڑا، اندر سے بلیک، چمکدار سنہری لکھائی */
+.stage{perspective:900px;height:240px;display:flex;justify-content:center;align-items:center;margin-top:10px}
 .stage.bump{animation:bump .7s ease}
-.coin{position:relative;width:140px;height:140px;transform-style:preserve-3d;animation:spin 8s linear infinite}
+.coin{--s:190px;position:relative;width:var(--s);height:var(--s);transform-style:preserve-3d;animation:spin 8s linear infinite;flex:none}
+.coin.sm{--s:76px}
 .e{position:absolute;inset:0;border-radius:50%;background:#a16207}
-.f{position:absolute;inset:0;border-radius:50%;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;color:#14532d;padding:16px;line-height:1.8;background:radial-gradient(circle at 30% 28%,#fef3c7,#fbbf24 50%,#b45309);box-shadow:inset 0 0 0 5px #fbbf24,inset 0 0 0 8px #92400e}
-.f small{font-size:11px;line-height:1.6;opacity:.8}
-.f::after{content:"";position:absolute;top:-20%;bottom:-20%;width:28%;left:36%;background:linear-gradient(90deg,transparent,#ffffff88,transparent);animation:shine 4s ease-in-out infinite}
+.f{position:absolute;inset:0;border-radius:50%;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;background:radial-gradient(circle at 30% 25%,#2a2a2a,#000 65%);box-shadow:inset 0 0 0 calc(var(--s)*.035) #fbbf24,inset 0 0 0 calc(var(--s)*.06) #92400e}
+.f b{display:block;font-size:calc(var(--s)*.16);color:#fde68a;text-shadow:0 0 8px #fbbf24,0 0 18px #f59e0b;line-height:1.7}
+.coin.sm .f b{font-size:12px;line-height:1.5;text-shadow:0 0 5px #fbbf24}
+.f::after{content:"";position:absolute;top:-20%;bottom:-20%;width:28%;left:36%;background:linear-gradient(90deg,transparent,#ffffff55,transparent);animation:shine 4s ease-in-out infinite}
 .fr{transform:translateZ(8px)}
 .bk{transform:rotateY(180deg) translateZ(8px)}
-.nb{display:flex;justify-content:center;gap:14px;margin:2px 0 6px}
-.mini-coin{display:inline-block;width:36px;height:36px;border-radius:50%;background:radial-gradient(circle at 30% 28%,#fef3c7,#fbbf24 50%,#b45309);box-shadow:inset 0 0 0 3px #92400e;vertical-align:middle;margin-left:8px;animation:spin 8s linear infinite;transform-style:preserve-3d}
+.coin.sm .fr{transform:translateZ(3px)}
+.coin.sm .bk{transform:rotateY(180deg) translateZ(3px)}
+.mc{display:inline-block;perspective:500px;vertical-align:middle;margin-left:10px}
+.shopname{font-size:30px;line-height:1.5}
 #installBtn{display:none;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:0;border-radius:18px;padding:8px 20px;font-size:19px;line-height:2;width:100%;margin:8px 0;cursor:pointer;box-shadow:0 4px 0 #b45309}
 .cd{background:#0f172a;color:#fff;border-radius:16px;padding:4px 16px;font-size:32px;line-height:1.9;text-align:left;direction:ltr;min-height:64px;overflow:hidden;word-break:break-all}
 .kp{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0;direction:ltr}
@@ -234,10 +229,10 @@ function stopMic(){const r=rec;if(!r)return;try{r.stop()}catch(x){}setTimeout(()
 function cancelMic(){const r=rec;rec=null;if(r)try{r.abort()}catch(x){}hideMic();document.querySelectorAll('.mic.on').forEach(b=>b.classList.remove('on'))}
 let pend=null,waitBack=false;
 function permSheet(fn,why){pend=fn;const g=why=='google';
-  sheet(`<h2 class="c">🎤 اجازت چاہیے</h2><p class="c">${g?'فون کی گوگل آواز والی ایپ کو مائک کی اجازت دینی ہے۔ نیچے Google Go کھولیں، وہاں مائک دبائیں، "While using the app" دبائیں اور واپس آ جائیں۔':'اوپر 🔒 دبائیں ← Permissions ← Microphone ← Allow۔ پھر نیچے "دوبارہ کوشش" دبائیں۔'}</p><button class="btn grn" onclick="allowMic()">✅ دوبارہ کوشش</button>${g?'<a class="btn" style="text-align:center" href="intent:#Intent;package=com.google.android.apps.searchlite;end" onclick="waitBack=true">🔎 Google Go کھولیں</a>':''}<button class="btn lite" onclick="closeSheet()">❌ بند کریں</button>`)}
-// اجازت کی حالت: ملی ہو تو سیدھا چلے، ورنہ Chrome کا "Allow" پاپ اپ خود آئے
+  sheet(`<h2 class="c">🎤 اجازت چاہیے</h2><p class="c">${g?'فون کی گوگل آواز والی ایپ کو مائک کی اجازت دینی ہے۔ نیچے Google Go کھولیں، وہاں مائک دبائیں، "While using the app" دبائیں اور واپس آ جائیں۔':'اوپر 🔒 دبائیں ← Permissions ← Reset permissions دبائیں۔ پھر نیچے "دوبارہ کوشش" دبائیں اور جب فون پوچھے تو Allow کر دیں۔'}</p><button class="btn grn" onclick="allowMic()">✅ دوبارہ کوشش</button>${g?'<a class="btn" style="text-align:center" href="intent:#Intent;package=com.google.android.apps.searchlite;end" onclick="waitBack=true">🔎 Google Go کھولیں</a>':''}<button class="btn lite" onclick="closeSheet()">❌ بند کریں</button>`)}
+// اجازت: ملی ہو تو سیدھا چلے، ورنہ فون کا اصل "Allow" باکس خود آئے
 async function micOK(){
-  try{if(navigator.permissions){const p=await navigator.permissions.query({name:'microphone'});if(p.state=='granted')return 1;if(p.state=='denied')return 0}}catch(e){}
+  try{if(navigator.permissions){const p=await navigator.permissions.query({name:'microphone'});if(p.state=='granted')return 1}}catch(e){}
   try{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop());return 1}catch(e){return 0}}
 async function allowMic(){
   try{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop());closeSheet();if(pend)mic(null,pend)}
@@ -250,8 +245,8 @@ async function mic(btn,fn){
   if(!navigator.onLine)return toast('مائک کے لیے انٹرنیٹ چاہیے۔ ٹائپ کر لیں');
   micLock=1;
   try{
-    if(window.speechSynthesis&&speechSynthesis.speaking){speechSynthesis.cancel();await new Promise(r=>setTimeout(r,250))}
     if(!await micOK())return permSheet(fn,'blocked');
+    if(window.speechSynthesis&&speechSynthesis.speaking){speechSynthesis.cancel();await new Promise(r=>setTimeout(r,250))}
     listen(btn,fn,0)}
   finally{micLock=0}}
 function listen(btn,fn,tried){
@@ -292,18 +287,10 @@ function key(k){const ops='+−×÷';
   else cx+=k;cshow()}
 function useCalc(){const v=cval();if(v===null||v<=0)return toast('پہلے حساب لگائیں');const i=$('#am');if(i)i.value=Math.round(v);closeCalc();toast('✅ رقم ڈال دی')}
 
-// 3D لوگو
-const DEF_NAME='ببلو کھاتا';
-const lname=()=>localStorage.getItem('lname')||DEF_NAME;
-function coinHTML(){
-  const n=lname(),l=n.length,fs=l<=6?30:l<=10?24:19,sub=n!=DEF_NAME?'<small>ببلو کھاتا</small>':'';
-  const face=`<b style="font-size:${fs}px">${esc(n)}</b>${sub}`;
-  return `<div class="coin">${[-6,-4,-2,0,2,4,6].map(z=>`<div class="e" style="transform:translateZ(${z}px)"></div>`).join('')}<div class="f fr">${face}</div><div class="f bk">${face}</div></div>`}
-function setName(n){
-  n=String(n||'').replace(/[.۔]+$/,'').trim().slice(0,16);if(!n)return toast('نام لکھیں');
-  localStorage.setItem('lname',n);const s=$('#stage');
-  if(s){s.innerHTML=coinHTML();s.classList.remove('bump');void s.offsetWidth;s.classList.add('bump')}toast('✅ نام لگ گیا')}
-function nameSheet(){sheet(`<h2 class="c">✏️ لوگو پر نام لکھیں</h2><input id="lnm" class="in" maxlength="16" value="${esc(lname())}"><button class="btn" onclick="setName($('#lnm').value);closeSheet()">✅ لگائیں</button><button class="btn lite" onclick="closeSheet()">❌ بند کریں</button>`);focus('lnm')}
+// 3D سکہ: بڑا، اندر سے بلیک، "چمکدار ببلو کھاتا"
+function coinHTML(sm){
+  const face='<b>چمکدار</b><b>ببلو کھاتا</b>';
+  return `<div class="coin${sm?' sm':''}">${[-6,-4,-2,0,2,4,6].map(z=>`<div class="e" style="transform:translateZ(${sm?z/2:z}px)"></div>`).join('')}<div class="f fr">${face}</div><div class="f bk">${face}</div></div>`}
 
 // وقت
 function sNow(){return base?base.s+Math.max(Date.now()-base.l,0):Date.now()}
@@ -318,7 +305,6 @@ async function sync(){
 // لاگ ان
 function authHTML(){const m=authMode;
   return `<div class="page anim c"><div class="stage" id="stage">${coinHTML()}</div>
-  <div class="nb"><button class="mic" onclick="mic(this,setName)">🎤</button><button class="mic" onclick="nameSheet()">✏️</button></div>
   <p class="sub">${m=='login'?'اپنا کھاتا کھولیں':m=='new'?'نیا کھاتا بنائیں':'نیا پن بنائیں'}</p>
   <div class="wrap">
   ${m=='reset'?'<div class="warn">⚠️ پرانا سارا ڈیٹا ختم ہو جائے گا</div>':''}
@@ -417,7 +403,7 @@ function delSale(id){ask('اس فروخت کو ڈیلیٹ کریں؟','🗑️ �
 function listHTML(anim){
   const bs=balMap();let tot=0;custs.forEach(c=>{if(!c.del&&(bs[c.id]||0)>0)tot+=bs[c.id]});
   return `<div class="page${anim?' anim':''}"><div class="top">
-  <div class="row"><div><small>دکاندار</small><br><b style="font-size:21px"><span class="mini-coin"></span> ${esc(me.name)}</b></div>
+  <div class="row"><div><small>دکاندار</small><br><span class="mc">${coinHTML(1)}</span><b class="shopname">${esc(me.name)}</b></div>
   <div class="row"><button class="ib" onclick="calc()">🧮<small>حساب</small></button><button class="ib" onclick="go({n:'trash'})">🗑️<small>ڈیلیٹ</small></button><button class="ib" onclick="logout()">🚪<small>باہر</small></button></div></div>
   <div class="tot"><div class="lg"><img src="logo.png" alt="" class="logo" onerror="this.style.display='none'"><div><small>کُل بقایا (لینے ہیں)</small><div class="amt" data-v="${tot}">${num(tot)}</div></div></div></div>
   <div class="row" style="margin-top:6px"><button class="ib" style="flex:1;font-size:16px" onclick="speakTot()">🔊 بقایا</button><button class="ib" style="flex:1;font-size:16px" onclick="morning()">📢 پرانے</button><button class="ib" style="flex:1.5;font-size:16px" onclick="report()">📊 آج کی رپورٹ</button></div>
@@ -574,31 +560,9 @@ if(ADM){
     userStart(u)});
   setInterval(()=>{if(me&&uid&&expired()!=showFee)render(false)},30000)}
 addEventListener('hashchange',()=>location.reload());
-if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
-</script>
-  <script>
-function coinHTML(){
-  const face='<b>چمکدار</b><b>ببلو کھاتا</b>';
-  return `<div class="coin">${[-6,-4,-2,0,2,4,6].map(z=>`<div class="e" style="transform:translateZ(${z}px)"></div>`).join('')}<div class="f fr">${face}</div><div class="f bk">${face}</div></div>`}
-
-function permSheet(fn){pend=fn;
-  sheet(`<h2 class="c">🎤 اجازت چاہیے</h2><p class="c">اوپر 🔒 دبائیں ← Permissions ← Reset permissions دبائیں۔ پھر نیچے "دوبارہ کوشش" دبائیں اور جب فون پوچھے تو Allow کر دیں۔</p><button class="btn grn" onclick="allowMic()">✅ دوبارہ کوشش</button><button class="btn lite" onclick="closeSheet()">❌ بند کریں</button>`)}
-
-async function micOK(){
-  try{if(navigator.permissions){const p=await navigator.permissions.query({name:'microphone'});if(p.state=='granted')return 1}}catch(e){}
-  try{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop());return 1}catch(e){return 0}}
-
-async function mic(btn,fn){
-  if(!SR)return toast('اس براؤزر میں مائک نہیں چلتا');
-  if(rec){if(Date.now()-micT>800)stopMic();return}
-  if(micLock)return;
-  if(!navigator.onLine)return toast('مائک کے لیے انٹرنیٹ چاہیے۔ ٹائپ کر لیں');
-  micLock=1;
-  try{
-    if(!await micOK())return permSheet(fn);
-    if(window.speechSynthesis&&speechSynthesis.speaking){speechSynthesis.cancel();await new Promise(r=>setTimeout(r,250))}
-    listen(btn,fn,0)}
-  finally{micLock=0}}
+if('serviceWorker'in navigator){const had=!!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had&&!window._rl){window._rl=1;location.reload()}});
+  addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
 </script>
 </body>
 </html>
