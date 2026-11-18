@@ -39,6 +39,9 @@ a{color:inherit;text-decoration:none}
 .ib:active{opacity:.7}
 .tot{text-align:center;margin-top:6px;line-height:1.8}
 .amt{font-size:42px;line-height:1.4}
+.lg{display:flex;align-items:center;justify-content:center;gap:12px;direction:ltr}
+.lg>div{direction:rtl;text-align:center}
+.logo{width:60px;height:60px;border-radius:50%;object-fit:cover;background:#000;border:2px solid #ffffffaa;box-shadow:0 3px 10px #0005}
 .wrap{padding:14px}
 .in{width:100%;border:2px solid #cbd5e1;border-radius:16px;padding:6px 14px;font-size:20px;line-height:2;background:#fff;margin:6px 0;text-align:right;outline:0;transition:border .2s,box-shadow .2s}
 .in:focus{border-color:#14b8a6;box-shadow:0 0 0 4px #14b8a622}
@@ -157,6 +160,7 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const en=s=>String(s||'').replace(/[۰-۹]/g,d=>d.charCodeAt(0)-1776).replace(/[٠-٩]/g,d=>d.charCodeAt(0)-1632);
 const num=n=>Math.round(n).toLocaleString('en-US');
+const tm12=t=>{const d=new Date(t);let h=d.getHours();const m=String(d.getMinutes()).padStart(2,'0'),p=h<4?'رات':h<12?'صبح':h<16?'دوپہر':h<20?'شام':'رات';return (h%12||12)+':'+m+' '+p};
 const fmt=t=>{if(!t)return'';const d=new Date(t);return d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear()};
 const mail=(p,v)=>p+(v>1?'v'+v:'')+'@bablu.app';
 const focus=id=>setTimeout(()=>{const e=$('#'+id);e&&e.focus()},350);
@@ -205,9 +209,10 @@ function speak(t){
   speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(say(t)),v=getVo();
   u.lang=v?v.lang:'ur-PK';if(v)u.voice=v;u.rate=.85;u.pitch=1.15;speechSynthesis.speak(u)}
 function nextVoice(){
-  const l=urV();if(!l.length)return noVoice();
-  const i=(l.findIndex(x=>x===getVo())+1)%l.length;localStorage.setItem('vo',l[i].voiceURI);
-  toast('آواز '+(i+1)+' / '+l.length);speak('السلام علیکم، اللہ کے نام سے شروع کریں')}
+  const l=urV();
+  if(l.length){const i=(l.findIndex(x=>x===getVo())+1)%l.length;localStorage.setItem('vo',l[i].voiceURI);toast('آواز '+(i+1)+' / '+l.length)}
+  else toast('اردو آواز نہیں ملی، فون کی عام آواز چلے گی');
+  speak('السلام علیکم، اللہ کا نام لے کر کاروبار شروع کریں')}
 
 // مائک: پہلی بار خود اجازت مانگتا ہے، ایک کلک پر شروع ہوتا ہے
 let rec=null,micT=0,micLock=0;
@@ -246,7 +251,7 @@ function listen(btn,fn,tried){
   r.onend=()=>{fin();if(rec!==r)return;rec=null;hideMic();if(txt.trim())fn(txt.trim());else toast('آواز نہیں آئی، دوبارہ دبائیں')};
   r.onerror=async e=>{if(rec!==r)return;fin();rec=null;hideMic();const c=e.error;
     if(c=='aborted')return;
-    if(c=='not-allowed'&&!tried){if(await micOK())return listen(btn,fn,1)}
+    if(c=='not-allowed'&&tried<2){if(await micOK()){await new Promise(x=>setTimeout(x,500));return listen(btn,fn,tried+1)}}
     if(c=='not-allowed')return permSheet(fn,'blocked');
     if(c=='service-not-allowed')return permSheet(fn,'google');
     toast(c=='network'?'مائک کو انٹرنیٹ چاہیے':c=='no-speech'?'آواز نہیں آئی، دوبارہ دبائیں':'آواز سمجھ نہیں آئی')};
@@ -354,27 +359,27 @@ function render(anim){
   if(anim)counts()}
 
 // بولنے والے جملے
-function speakTot(){const bs=balMap();let t=0;custs.forEach(c=>{if(!c.del&&bs[c.id]>0)t+=bs[c.id]});speak('کل بقایا '+num(t)+' روپے ہے')}
+function speakTot(){const bs=balMap();let t=0;custs.forEach(c=>{if(!c.del&&bs[c.id]>0)t+=bs[c.id]});speak('کُل بقایا '+num(t)+' روپے ہے')}
 function speakC(id){const c=custs.find(x=>x.id==id);if(!c)return;const b=acc(id).b;speak(b==0?c.name+' کا حساب صاف ہے':c.name+(b>0?' سے ':' کو ')+num(Math.abs(b))+(b>0?' روپے لینے ہیں':' روپے دینے ہیں'))}
 function speakAcc(id){const c=custs.find(x=>x.id==id),a=acc(id);if(!c)return;
-  speak(a.b<=0?c.name+' کا حساب صاف ہے':a.tl?c.name+' کا کل ادھار '+num(a.td)+' روپے تھا، '+num(a.tl)+' مل گئے، اب '+num(a.b)+' روپے باقی ہیں':c.name+' کا کل ادھار '+num(a.td)+' روپے ہے')}
+  speak(a.b<=0?c.name+' کا حساب صاف ہے':a.tl?c.name+' کا کُل ادھار '+num(a.td)+' روپے تھا، '+num(a.tl)+' مل گئے، اب '+num(a.b)+' روپے باقی ہیں':c.name+' کا کُل ادھار '+num(a.td)+' روپے ہے')}
 function speakE(id){const e=ents.find(x=>x.id==id);if(e)speak((e.type=='d'?'ادھار دیا ':'پیسے لیے ')+num(e.amt)+' روپے، تاریخ '+fmt(e.ts))}
 function morning(){
   const bs=balMap(),l=custs.filter(c=>{if(c.del||!(bs[c.id]>0))return 0;const s=acc(c.id).start;return s&&daysDiff(s)>=ALERT_DAYS});
   if(!l.length)return speak('کوئی پرانا ادھار نہیں ہے');
   speak(l.map(c=>c.name+' نے '+num(bs[c.id])+' روپے نہیں دیے، '+daysDiff(acc(c.id).start)+' دن ہو گئے').join('۔ '))}
 
-// آج کی رپورٹ: فروخت، بچت، ادھار، وصولی، کل بقایا (کھلتے ہی بولتی ہے، 🎤 بٹن سے دوبارہ)
+// آج کی رپورٹ: فروخت، بچت، ادھار، وصولی، کُل بقایا (کھلتے ہی بولتی ہے، 🎤 بٹن سے دوبارہ)
 function report(sp){
   const t0=new Date().setHours(0,0,0,0),nm=id=>{const c=custs.find(x=>x.id==id);return c?c.name:''};
   const es=ents.filter(e=>!e.del&&e.ts>=t0).sort((a,b)=>b.ts-a.ts),D=es.filter(e=>e.type=='d'),L=es.filter(e=>e.type=='l'),td=sum(D),tl=sum(L);
   const S=sales.filter(s=>!s.del&&s.ts>=t0).sort((a,b)=>b.ts-a.ts),ts=sum(S),tp=S.reduce((a,s)=>a+(s.profit||0),0);
   const bs=balMap();let all=0;custs.forEach(c=>{if(!c.del&&bs[c.id]>0)all+=bs[c.id]});
-  window.repT='آج فروخت '+num(ts)+' روپے رہی اور بچت '+num(tp)+' روپے ہوئی۔ '+(D.length?'ادھار '+D.length+' بار دیا، کل '+num(td)+' روپے کا۔ ':'آج کوئی ادھار نہیں دیا۔ ')+(tl?num(tl)+' روپے وصول ہوئے۔ ':'')+'سب گاہکوں کا کل بقایا '+num(all)+' روپے ہے';
+  window.repT='آج فروخت '+num(ts)+' روپے رہی اور بچت '+num(tp)+' روپے ہوئی۔ '+(D.length?'ادھار '+D.length+' بار دیا، کُل '+num(td)+' روپے کا۔ ':'آج کوئی ادھار نہیں دیا۔ ')+(tl?num(tl)+' روپے وصول ہوئے۔ ':'')+'سب گاہکوں کا کُل بقایا '+num(all)+' روپے ہے';
   const bx=(l,v,c)=>`<div class="bx" style="background:#f1f5f9"><small>${l}</small><b class="${c||''}">${num(v)}</b></div>`;
-  const tm=t=>new Date(t).toTimeString().slice(0,5);
+  const tm=tm12;
   sheet(`<h2 class="c">📊 آج کی رپورٹ<br><small>${fmt(Date.now())}</small></h2>
-  <div class="b3">${bx('فروخت ('+S.length+')',ts)}${bx('آج کی بچت',tp,'g')}${bx('ادھار دیا ('+D.length+')',td,'r')}${bx('وصول ('+L.length+')',tl,'g')}<div class="bx big"><small>سب گاہکوں کا کل بقایا (لینے ہیں)</small><b>${num(all)}</b></div></div>
+  <div class="b3">${bx('فروخت ('+S.length+')',ts)}${bx('آج کی بچت',tp,'g')}${bx('ادھار دیا ('+D.length+')',td,'r')}${bx('وصول ('+L.length+')',tl,'g')}<div class="bx big"><small>سب گاہکوں کا کُل بقایا (لینے ہیں)</small><b>${num(all)}</b></div></div>
   <button class="btn grn" onclick="speak(repT)">🎤 رپورٹ سنائیں</button>
   ${S.map(s=>`<div class="card ent gr"><div><div class="ea g">💰 فروخت ${num(s.amt)} — بچت ${num(s.profit||0)}</div>${s.note?'<div>'+esc(s.note)+'</div>':''}<small>${tm(s.ts)}</small></div><button class="del" onclick="delSale('${s.id}')">🗑️</button></div>`).join('')}
   ${es.map(e=>`<div class="card ent ${e.type=='d'?'rd':'gr'}"><div><div class="ea ${e.type=='d'?'r':'g'}">${esc(nm(e.cid))} — ${e.type=='d'?'ادھار':'وصول'} ${num(e.amt)}</div>${e.note?'<div>'+esc(e.note)+'</div>':''}</div><small>${tm(e.ts)}</small></div>`).join('')}
@@ -403,7 +408,7 @@ function listHTML(anim){
   return `<div class="page${anim?' anim':''}"><div class="top">
   <div class="row"><div><small>دکاندار</small><br><b style="font-size:21px"><span class="mini-coin"></span> ${esc(me.name)}</b></div>
   <div class="row"><button class="ib" onclick="calc()">🧮<small>حساب</small></button><button class="ib" onclick="go({n:'trash'})">🗑️<small>ڈیلیٹ</small></button><button class="ib" onclick="logout()">🚪<small>باہر</small></button></div></div>
-  <div class="tot"><small>کل بقایا (لینے ہیں)</small><div class="amt" data-v="${tot}">${num(tot)}</div></div>
+  <div class="tot"><div class="lg"><img src="logo.png" alt="" class="logo" onerror="this.style.display='none'"><div><small>کُل بقایا (لینے ہیں)</small><div class="amt" data-v="${tot}">${num(tot)}</div></div></div></div>
   <div class="row" style="margin-top:6px"><button class="ib" style="flex:1;font-size:16px" onclick="speakTot()">🔊 بقایا</button><button class="ib" style="flex:1;font-size:16px" onclick="morning()">📢 پرانے</button><button class="ib" style="flex:1.5;font-size:16px" onclick="report()">📊 آج کی رپورٹ</button></div>
   </div><div class="wrap"><div class="row" style="margin-bottom:8px">
   <input class="in" id="srch" placeholder="🔍 گاہک ڈھونڈیں" value="${esc(q)}" oninput="q=this.value;$('#cl').innerHTML=cl_html()" style="margin:0">
@@ -438,7 +443,7 @@ function custHTML(anim){
   return `<div class="page${anim?' anim':''}"><div class="top">
   <div class="row"><button class="ib" onclick="go({n:'list'})">➡️<small>واپس</small></button><b style="font-size:21px">👤 ${esc(c.name)}</b><button class="ib" onclick="delCust('${c.id}')">🗑️<small>ہٹائیں</small></button></div>
   <div class="b3">
-   <div class="bx" style="--d:.05s"><small>کل ادھار${a.first?' • '+fmt(a.first):''}</small><b data-v="${a.td}">${num(a.td)}</b></div>
+   <div class="bx" style="--d:.05s"><small>کُل ادھار${a.first?' • '+fmt(a.first):''}</small><b data-v="${a.td}">${num(a.td)}</b></div>
    <div class="bx" style="--d:.12s"><small>واپس ملے${a.lastL?' • '+fmt(a.lastL):''}</small><b class="g" data-v="${a.tl}">${num(a.tl)}</b></div>
    <div class="bx big${a.b<=0?' ok':''}" style="--d:.2s"><small>${a.b>0?'باقی لینے ہیں':a.b<0?'زیادہ دیے (ہم نے دینے ہیں)':'حساب صاف'}</small><b data-v="${Math.abs(a.b)}">${num(Math.abs(a.b))}</b></div>
   </div>
@@ -449,7 +454,7 @@ function custHTML(anim){
   ${es.length?es.map((e,i)=>{const old=e.type=='d'&&daysDiff(e.ts)>=ALERT_DAYS&&a.b>0;
    return `<div class="card ent ${e.type=='d'?'rd':'gr'}${n-e.ts<3000?' new':''}" style="--d:${Math.min(i,8)*.05}s"><div>
    <div class="ea ${e.type=='d'?'r':'g'}">${e.type=='d'?'ادھار دیا':'پیسے لیے'}: ${num(e.amt)}</div>${e.note?'<div>'+esc(e.note)+'</div>':''}
-   <small style="color:#64748b">${fmt(e.ts)}${old?' ⚠️':''}</small></div>
+   <small style="color:#64748b">${fmt(e.ts)} • ${tm12(e.ts)}${old?' ⚠️':''}</small></div>
    <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><button class="spk" onclick="speakE('${e.id}')">🔊</button><button class="del" onclick="delEnt('${e.id}')">🗑️</button></div></div>`}).join(''):'<div class="empty">ابھی کوئی انٹری نہیں</div>'}
   </div>${footerHTML()}</div>`}
 function entSheet(t){
@@ -533,7 +538,7 @@ function adminRender(){
   const n=Date.now(),t0=new Date().setHours(0,0,0,0),cm=u=>u.createdAt?u.createdAt.toMillis():n,pu=u=>u.paidUntil?u.paidUntil.toMillis():0,ex=u=>pu(u)<n;
   const seen={},l=users.slice().sort((a,b)=>cm(b)-cm(a)).filter(u=>seen[u.phone]?0:(seen[u.phone]=1));
   $('#app').innerHTML=`<div class="page${adminAnim?' anim':''}"><div class="top"><div class="row"><b style="font-size:21px">🛠️ ایڈمن پینل</b><button class="ib" onclick="aauth.signOut()">🚪<small>باہر</small></button></div>
-  <div class="st"><div>کل دکاندار<b>${l.length}</b></div><div>آج کے نئے<b>${l.filter(u=>cm(u)>=t0).length}</b></div><div>فیس باقی<b>${l.filter(ex).length}</b></div></div></div><div class="wrap">
+  <div class="st"><div>کُل دکاندار<b>${l.length}</b></div><div>آج کے نئے<b>${l.filter(u=>cm(u)>=t0).length}</b></div><div>فیس باقی<b>${l.filter(ex).length}</b></div></div></div><div class="wrap">
   ${l.map((u,i)=>`<div class="card col" style="--d:${Math.min(i,8)*.05}s"><div><div class="nm">👤 ${esc(u.name)}</div><a href="tel:${esc(u.phone)}" dir="ltr" style="text-align:right;font-size:18px">📞 ${esc(u.phone)}</a><div><small>📅 ${fmt(cm(u))} — ${ex(u)?'🔴 بند':'🟢 کھلا ('+Math.ceil((pu(u)-n)/DAY)+' دن باقی)'}</small></div></div>
   <button class="btn ${ex(u)?'grn':'red'}" onclick="tog('${u.id}',${ex(u)})">${ex(u)?'🟢 کھاتہ کھولیں (30 دن)':'🔴 کھاتہ بند کریں'}</button><button class="btn org" onclick="resetPin('${u.id}')">🔑 پن ری سیٹ</button></div>`).join('')||'<div class="empty">ابھی کوئی دکاندار نہیں</div>'}
   </div>${footerHTML()}</div>`;adminAnim=false}
