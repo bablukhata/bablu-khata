@@ -6,11 +6,12 @@
 <meta name="theme-color" content="#0f766e">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400..700&display=swap" rel="stylesheet">
 <title>ببلو کھاتا</title>
 <style>
-@font-face{font-family:'NotoUrdu';src:url('https://fonts.gstatic.com/s/notonastaliqurdu/v22/LhWNMUPbKoeKZNGMoiLfN4-DlmNIAeHnpA.woff2') format('woff2');font-display:swap}
+@font-face{font-family:'Jameel';src:local('Jameel Noori Nastaleeq'),url('jameel.ttf')}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:linear-gradient(160deg,#eef4f3,#ddeee9);color:#1f2937;font:700 18px/2.2 'NotoUrdu','Noto Nastaliq Urdu','Noto Naskh Arabic',serif;min-height:100vh}
+body{margin:0;background:linear-gradient(160deg,#eef4f3,#ddeee9);color:#1f2937;font:600 18px/2.4 'Jameel','Noto Nastaliq Urdu','Noto Naskh Arabic',serif;min-height:100vh}
 button,input{font:inherit}
 a{color:inherit;text-decoration:none}
 .page{min-height:100vh;padding-bottom:140px}
@@ -170,16 +171,25 @@ function em(e){const c=e.code||'';
   if(c.includes('too-many'))return 'بہت کوششیں ہو گئیں۔ تھوڑی دیر بعد کریں';
   if(c.includes('permission'))return 'اجازت نہیں ہے';
   return 'کچھ گڑبڑ ہو گئی'}
-function footerHTML(){return `<div class="footer"><b>📒 ${APP_NAME}</b><br>واٹس ایپ: <a href="https://wa.me/92${WA_NUM.slice(1)}">${WA_NUM}</a><br><small>آپ کا ڈیجیٹل حساب کتاب</small></div>`}
+function footerHTML(){return `<div class="footer"><b>📒 ${APP_NAME}</b><br>واٹس ایپ: <a href="https://wa.me/92${WA_NUM.slice(1)}">${WA_NUM}</a><br><small>آپ کا ڈیجیٹل حساب کتاب</small><br><button class="lnk" onclick="nextVoice()">🔈 آواز بدلیں</button></div>`}
 async function installApp(){
   if(!deferredInstall)return toast('ایپ پہلے سے انسٹال ہے یا انسٹال نہیں ہو سکتی');
   deferredInstall.prompt();const r=await deferredInstall.userChoice;
   if(r.outcome==='accepted')toast('✅ ایپ انسٹال ہو گئی!');deferredInstall=null}
 
-// بولنا (انٹرنیٹ کے بغیر بھی چلتا ہے اگر فون میں اردو آواز ہو)
+// آواز: فون کی اردو آواز (آف لائن بھی چلتی ہے)، پسند کی آواز یاد رکھتی ہے
+const urV=()=>window.speechSynthesis?speechSynthesis.getVoices().filter(x=>/^ur/i.test(x.lang)):[];
+if(window.speechSynthesis)speechSynthesis.onvoiceschanged=()=>{};
+function getVo(){const l=urV(),n=localStorage.getItem('vo');return l.find(x=>x.voiceURI==n)||l.find(x=>x.localService)||l[0]||null}
+function noVoice(){sheet(`<h2 class="c">🔈 اردو آواز نہیں ملی</h2><p class="c">فون Settings ← Google Text-to-speech (یا Speech Services) ← Install voice data ← اردو (پاکستان) ڈاؤن لوڈ کریں۔ ایک بار ڈاؤن لوڈ ہو جائے تو انٹرنیٹ کے بغیر بھی بولے گا۔</p><button class="btn" onclick="closeSheet()">✅ ٹھیک ہے</button>`)}
 function speak(t){
   if(!window.speechSynthesis)return toast('یہ فون آواز نہیں دے سکتا');
-  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='ur-PK';u.rate=.9;speechSynthesis.speak(u)}
+  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t),v=getVo();
+  u.lang=v?v.lang:'ur-PK';if(v)u.voice=v;u.rate=.85;u.pitch=1.15;speechSynthesis.speak(u)}
+function nextVoice(){
+  const l=urV();if(!l.length)return noVoice();
+  const i=(l.findIndex(x=>x===getVo())+1)%l.length;localStorage.setItem('vo',l[i].voiceURI);
+  toast('آواز '+(i+1)+' / '+l.length);speak('السلام علیکم، یہ میری آواز ہے')}
 
 // مائک: خوبصورت اردو اسکرین، اجازت صاف مانگتا ہے
 let rec=null;
@@ -188,7 +198,12 @@ function showMic(t){if(!$('#mt'))$('#mc').innerHTML=`<div class="ov"><div class=
 function hideMic(){$('#mc').innerHTML=''}
 function stopMic(){if(rec)try{rec.stop()}catch(x){}}
 function cancelMic(){const r=rec;rec=null;if(r)try{r.abort()}catch(x){}hideMic()}
-function permSheet(){sheet(`<h2 class="c">🎤 مائک کی اجازت چاہیے</h2><p class="c">اوپر ⋮ یا 🔒 دبائیں ← اجازتیں (Permissions) ← Microphone ← اجازت دیں (Allow)۔<br>ایپ ہوم اسکرین والی ہو تو یہی لنک Chrome میں کھول کر اجازت دیں۔</p><button class="btn" onclick="closeSheet()">✅ ٹھیک ہے</button>`)}
+let pend=null;
+async function permSheet(fn){pend=fn;let st='';try{st=(await navigator.permissions.query({name:'microphone'})).state}catch(x){}
+  sheet(`<h2 class="c">🎤 مائک کی اجازت</h2>${st=='denied'?'<p class="c r">مائک بلاک ہے، نیچے ترتیب بدلنی ہوگی</p>':''}<button class="btn grn" onclick="allowMic()">✅ اجازت دیں (Allow)</button><p class="c"><small>اگر Allow کا پیغام نہ آئے: فون Settings ← Apps ← Chrome ← Permissions ← Microphone ← Allow۔ یہی Google ایپ میں بھی کریں۔ پھر Chrome بند کر کے دوبارہ کھولیں۔<br>یا Chrome میں 🔒 ← Permissions ← Microphone ← Allow۔</small></p><button class="btn lite" onclick="closeSheet()">❌ بند کریں</button>`)}
+async function allowMic(){
+  try{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop());closeSheet();if(pend)mic(null,pend)}
+  catch(e){toast('اجازت نہیں ملی، نیچے والی ترتیب دیکھیں')}}
 function mic(btn,fn){
   if(!SR)return toast('اس براؤزر میں مائک نہیں چلتا');
   if(rec)return stopMic();
@@ -201,7 +216,7 @@ function listen(btn,fn,tried){
   r.onerror=async e=>{if(rec!==r)return;
     if(e.error=='not-allowed'&&!tried){rec=null;try{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop());return listen(btn,fn,1)}catch(x){}}
     if(rec===r)rec=null;txt='';hideMic();if(btn)btn.classList.remove('on');
-    if(e.error=='not-allowed'||e.error=='service-not-allowed'||!e.error)permSheet();
+    if(e.error=='not-allowed'||e.error=='service-not-allowed'||!e.error)permSheet(fn);
     else toast(e.error=='network'?'مائک کو انٹرنیٹ چاہیے':e.error=='no-speech'?'آواز نہیں آئی، دوبارہ دبائیں':'آواز سمجھ نہیں آئی')};
   if(btn)btn.classList.add('on');showMic('');
   try{r.start()}catch(x){rec=null;hideMic()}}
