@@ -15,6 +15,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:linear-gradient(160deg,#eef4f3,#ddeee9);color:#1f2937;font:600 18px/2.4 'Jameel','Noto Nastaliq Urdu','Gulzar','Noto Naskh Arabic',serif;min-height:100vh}
 button,input{font:inherit}
+button,a,.cust,.ib,.btn,.mic,.spk,.del,.lnk{touch-action:manipulation}
 a{color:inherit;text-decoration:none}
 .page{min-height:100vh;padding-bottom:140px}
 .anim{animation:fade .4s ease}
@@ -46,7 +47,7 @@ a{color:inherit;text-decoration:none}
 .wrap{padding:14px}
 .in{width:100%;border:2px solid #cbd5e1;border-radius:16px;padding:6px 14px;font-size:20px;line-height:2;background:#fff;margin:6px 0;text-align:right;outline:0;transition:border .2s,box-shadow .2s}
 .in:focus{border-color:#14b8a6;box-shadow:0 0 0 4px #14b8a622}
-.btn{display:block;width:100%;border:0;border-radius:18px;padding:6px 10px;font-size:21px;line-height:2;color:#fff;background:#0f766e;box-shadow:0 4px 0 #0a5a54;transition:transform .12s,box-shadow .12s;margin:8px 0;cursor:pointer}
+.btn{display:block;width:100%;border:0;border-radius:18px;padding:6px 10px;font-size:21px;line-height:2;color:#fff;background:#0f766e;box-shadow:0 4px 0 #0a5a54;transition:transform .08s,box-shadow .08s;margin:8px 0;cursor:pointer}
 .btn:active{transform:translateY(4px) scale(.98);box-shadow:none}
 .btn.red{background:#dc2626;box-shadow:0 4px 0 #a31b1b}
 .btn.grn{background:#16a34a;box-shadow:0 4px 0 #0f7a36}
@@ -89,6 +90,9 @@ a{color:inherit;text-decoration:none}
 #calc .ov{z-index:20}
 .box{background:#fff;width:100%;border-radius:28px 28px 0 0;padding:12px 16px 24px;animation:slide .3s ease;max-height:92vh;overflow:auto}
 .box h2{margin:4px 0;font-size:21px}
+.steps{text-align:right;font-size:19px;line-height:2.3;padding:0 6px;margin:4px 0 8px}
+.steps div{border-bottom:1px dashed #e2e8f0}
+.steps div:last-child{border:0}
 .mic{background:#e0f2fe;border:0;border-radius:16px;font-size:22px;padding:4px 12px;line-height:1.9;flex:none;cursor:pointer}
 .mic:active{transform:scale(.92)}
 .mic.on{animation:pulse 1s infinite;background:#fecaca}
@@ -104,15 +108,15 @@ a{color:inherit;text-decoration:none}
 .footer{text-align:center;padding:16px 10px 8px;color:#64748b;font-size:14px;line-height:2.2;border-top:1px solid #e2e8f0;margin-top:20px}
 .footer b{color:#0f766e;font-size:17px}
 .footer a{color:#0f766e}
-/* سکہ: بڑا، اندر سے بلیک، چمکدار سنہری لکھائی */
-.stage{perspective:900px;height:240px;display:flex;justify-content:center;align-items:center;margin-top:10px}
+/* سکہ: بڑا، اندر سے بلیک، سنہری 3D خطاطی "ببلو کھاتا" */
+.stage{perspective:900px;height:270px;display:flex;justify-content:center;align-items:center;margin-top:10px}
 .stage.bump{animation:bump .7s ease}
-.coin{--s:190px;position:relative;width:var(--s);height:var(--s);transform-style:preserve-3d;animation:spin 8s linear infinite;flex:none}
-.coin.sm{--s:76px}
+.coin{--s:215px;position:relative;width:var(--s);height:var(--s);transform-style:preserve-3d;animation:spin 8s linear infinite;flex:none}
+.coin.sm{--s:96px}
 .e{position:absolute;inset:0;border-radius:50%;background:#a16207}
 .f{position:absolute;inset:0;border-radius:50%;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;background:radial-gradient(circle at 30% 25%,#2a2a2a,#000 65%);box-shadow:inset 0 0 0 calc(var(--s)*.035) #fbbf24,inset 0 0 0 calc(var(--s)*.06) #92400e}
-.f b{display:block;font-size:calc(var(--s)*.16);color:#fde68a;text-shadow:0 0 8px #fbbf24,0 0 18px #f59e0b;line-height:1.7}
-.coin.sm .f b{font-size:12px;line-height:1.5;text-shadow:0 0 5px #fbbf24}
+.f .ci{width:84%;height:auto;display:block;pointer-events:none}
+.f .cf{display:block;font-size:calc(var(--s)*.2);color:#fde68a;text-shadow:0 0 8px #fbbf24,0 0 18px #f59e0b;line-height:1.7}
 .f::after{content:"";position:absolute;top:-20%;bottom:-20%;width:28%;left:36%;background:linear-gradient(90deg,transparent,#ffffff55,transparent);animation:shine 4s ease-in-out infinite}
 .fr{transform:translateZ(8px)}
 .bk{transform:rotateY(180deg) translateZ(8px)}
@@ -130,6 +134,10 @@ a{color:inherit;text-decoration:none}
 .kp .eq{background:#0f766e;color:#fff}
 .kp .w2{grid-column:span 2}
 .btn.org{background:#ea580c;box-shadow:0 4px 0 #c2410c}
+/* واٹس ایپ یاددہانی بٹن */
+.wab{display:block;width:100%;margin-top:10px;border:0;border-radius:16px;padding:2px 12px;font-size:18px;line-height:2.2;color:#fff;background:linear-gradient(135deg,#25d366,#128c7e);box-shadow:0 3px 0 #0b6b5e;cursor:pointer;transition:transform .08s,box-shadow .08s}
+.wab:active{transform:translateY(3px);box-shadow:none}
+.wah{text-align:center;font-size:12px;line-height:2;color:#d1fae5;margin-top:2px}
 @keyframes wv{50%{height:46px}}
 #mc .ov{z-index:40}
 .wv{display:flex;justify-content:center;align-items:center;gap:7px;height:52px}
@@ -191,9 +199,21 @@ async function installApp(){
   deferredInstall.prompt();const r=await deferredInstall.userChoice;
   if(r.outcome==='accepted')toast('✅ ایپ انسٹال ہو گئی!');deferredInstall=null}
 
-// آواز: فون کی اردو آواز (آف لائن بھی چلتی ہے)، پسند کی آواز یاد رکھتی ہے
+// ===== فوری ردعمل: دباتے وقت صفحہ دوبارہ نہ بنے (ورنہ کلک ضائع ہو جاتی ہے) =====
+let pressing=false,pT=0;
+addEventListener('pointerdown',()=>{pressing=true;clearTimeout(pT);pT=setTimeout(()=>{pressing=false},1500)},true);
+const relPress=()=>{clearTimeout(pT);pT=setTimeout(()=>{pressing=false},80)};
+addEventListener('pointerup',relPress,true);
+addEventListener('pointercancel',relPress,true);
+
+// ===== آواز: فون کی اردو آواز (آف لائن بھی چلتی ہے)، پہلی کلک پر چلے =====
 const urV=()=>window.speechSynthesis?speechSynthesis.getVoices().filter(x=>/^ur/i.test(x.lang)):[];
-if(window.speechSynthesis)speechSynthesis.onvoiceschanged=()=>{};
+if(window.speechSynthesis){try{speechSynthesis.getVoices()}catch(e){}speechSynthesis.onvoiceschanged=()=>{}}
+let ttsUnlocked=false;
+function unlockTTS(){
+  if(ttsUnlocked||!window.speechSynthesis)return;ttsUnlocked=true;
+  try{const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u)}catch(e){}}
+addEventListener('pointerdown',unlockTTS,{once:true,capture:true});
 function getVo(){const l=urV(),n=localStorage.getItem('vo');return l.find(x=>x.voiceURI==n)||l.find(x=>x.localService)||l[0]||null}
 function noVoice(){sheet(`<h2 class="c">🔈 اردو آواز نہیں ملی</h2><p class="c">فون Settings ← Google Text-to-speech (یا Speech Services) ← Install voice data ← اردو (پاکستان) ڈاؤن لوڈ کریں۔ ایک بار ڈاؤن لوڈ ہو جائے تو انٹرنیٹ کے بغیر بھی بولے گا۔</p><button class="btn" onclick="closeSheet()">✅ ٹھیک ہے</button>`)}
 const UW='زیرو ایک دو تین چار پانچ چھ سات آٹھ نو دس گیارہ بارہ تیرہ چودہ پندرہ سولہ سترہ اٹھارہ انیس بیس اکیس بائیس تئیس چوبیس پچیس چھبیس ستائیس اٹھائیس انتیس تیس اکتیس بتیس تینتیس چونتیس پینتیس چھتیس سینتیس اڑتیس انتالیس چالیس اکتالیس بیالیس تینتالیس چوالیس پینتالیس چھیالیس سینتالیس اڑتالیس انچاس پچاس اکاون باون ترپن چون پچپن چھپن ستاون اٹھاون انسٹھ ساٹھ اکسٹھ باسٹھ تریسٹھ چونسٹھ پینسٹھ چھیاسٹھ سڑسٹھ اڑسٹھ انہتر ستر اکہتر بہتر تہتر چوہتر پچھتر چھہتر ستتر اٹھہتر انیاسی اسی اکیاسی بیاسی تراسی چوراسی پچاسی چھیاسی ستاسی اٹھاسی نواسی نوے اکیانوے بانوے ترانوے چورانوے پچانوے چھیانوے ستانوے اٹھانوے ننانوے'.split(' ');
@@ -210,17 +230,27 @@ function w2n(t){let tot=0,cur=0,ok=0;
     else if(w=='لاکھ'){tot+=(cur||1)*1e5;cur=0;ok=1}
     else if(w=='کروڑ'){tot+=(cur||1)*1e7;cur=0;ok=1}}
   return ok?tot+cur:0}
+let spT=0,spId=0;
 function speak(t){
-  if(!window.speechSynthesis)return toast('یہ فون آواز نہیں دے سکتا');
-  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(say(t)),v=getVo();
-  u.lang=v?v.lang:'ur-PK';if(v)u.voice=v;u.rate=.85;u.pitch=1.15;speechSynthesis.speak(u)}
+  const ss=window.speechSynthesis;
+  if(!ss)return toast('یہ فون آواز نہیں دے سکتا');
+  clearTimeout(spT);const id=++spId,txt=say(t);
+  const mk=()=>{const v=getVo(),u=new SpeechSynthesisUtterance(txt);u.lang=v?v.lang:'ur-PK';if(v)u.voice=v;u.rate=.85;u.pitch=1.15;return u};
+  const run=()=>{
+    let ok=0;const u=mk();u.onstart=()=>{ok=1};
+    try{ss.resume()}catch(e){}
+    ss.speak(u);
+    // اگر فون نے آواز نگل لی ہو تو ایک بار خود دوبارہ کوشش
+    setTimeout(()=>{if(id===spId&&!ok&&!ss.speaking){try{ss.cancel()}catch(e){}setTimeout(()=>{if(id===spId)ss.speak(mk())},100)}},900)};
+  // خالی ہو تو فوراً بولے، مصروف ہو تو پہلے روکے پھر بولے
+  if(ss.speaking||ss.pending){ss.cancel();spT=setTimeout(run,120)}else run()}
 function nextVoice(){
   const l=urV();
   if(l.length){const i=(l.findIndex(x=>x===getVo())+1)%l.length;localStorage.setItem('vo',l[i].voiceURI);toast('آواز '+(i+1)+' / '+l.length)}
   else toast('اردو آواز نہیں ملی، فون کی عام آواز چلے گی');
   speak('السلام علیکم، اللہ کا نام لے کر کاروبار شروع کریں')}
 
-// مائک: پہلی بار خود اجازت مانگتا ہے، ایک کلک پر شروع ہوتا ہے
+// ===== مائک: پہلی بار خود اجازت مانگتا ہے، ایک کلک پر شروع ہوتا ہے =====
 let rec=null,micT=0,micLock=0;
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 function showMic(t){if(!$('#mt'))$('#mc').innerHTML=`<div class="ov"><div class="box c"><div class="wv"><i></i><i></i><i></i><i></i><i></i></div><h2>🎤 بولیں</h2><div id="mt" class="mt"></div><button class="btn grn" onclick="stopMic()">✅ بول لیا</button><button class="btn lite" onclick="cancelMic()">❌ بند کریں</button></div></div>`;$('#mt').textContent=t||'سن رہا ہوں...'}
@@ -228,15 +258,19 @@ function hideMic(){$('#mc').innerHTML=''}
 function stopMic(){const r=rec;if(!r)return;try{r.stop()}catch(x){}setTimeout(()=>{if(rec===r)cancelMic()},2500)}
 function cancelMic(){const r=rec;rec=null;if(r)try{r.abort()}catch(x){}hideMic();document.querySelectorAll('.mic.on').forEach(b=>b.classList.remove('on'))}
 let pend=null,waitBack=false;
+// اجازت بند ہو تو صاف اردو ہدایت (انگریزی لفظ الگ سیدھے لکھے)
 function permSheet(fn,why){pend=fn;const g=why=='google';
-  sheet(`<h2 class="c">🎤 اجازت چاہیے</h2><p class="c">${g?'فون کی گوگل آواز والی ایپ کو مائک کی اجازت دینی ہے۔ نیچے Google Go کھولیں، وہاں مائک دبائیں، "While using the app" دبائیں اور واپس آ جائیں۔':'اوپر 🔒 دبائیں ← Permissions ← Reset permissions دبائیں۔ پھر نیچے "دوبارہ کوشش" دبائیں اور جب فون پوچھے تو Allow کر دیں۔'}</p><button class="btn grn" onclick="allowMic()">✅ دوبارہ کوشش</button>${g?'<a class="btn" style="text-align:center" href="intent:#Intent;package=com.google.android.apps.searchlite;end" onclick="waitBack=true">🔎 Google Go کھولیں</a>':''}<button class="btn lite" onclick="closeSheet()">❌ بند کریں</button>`)}
+  const st=g
+   ?`<div class="steps"><div>1️⃣ نیچے <span dir="ltr">Google Go</span> کھولیں</div><div>2️⃣ وہاں مائک 🎤 دبائیں</div><div>3️⃣ <span dir="ltr">While using the app</span> دبائیں</div><div>4️⃣ واپس یہاں آ جائیں</div></div>`
+   :`<div class="steps"><div>1️⃣ اوپر ایڈریس بار میں 🔒 دبائیں</div><div>2️⃣ <span dir="ltr">Permissions</span> کھولیں</div><div>3️⃣ <span dir="ltr">Microphone</span> کو <span dir="ltr">Allow</span> کریں</div><div>4️⃣ پھر نیچے "دوبارہ کوشش" دبائیں</div></div>`;
+  sheet(`<h2 class="c">🎤 مائک کی اجازت چاہیے</h2>${st}<button class="btn grn" onclick="allowMic()">✅ دوبارہ کوشش</button>${g?'<a class="btn" style="text-align:center" href="intent:#Intent;package=com.google.android.apps.searchlite;end" onclick="waitBack=true">🔎 Google Go کھولیں</a>':''}<button class="btn lite" onclick="closeSheet()">❌ بند کریں</button>`)}
 // اجازت: ملی ہو تو سیدھا چلے، ورنہ فون کا اصل "Allow" باکس خود آئے
 async function micOK(){
   try{if(navigator.permissions){const p=await navigator.permissions.query({name:'microphone'});if(p.state=='granted')return 1}}catch(e){}
   try{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop());return 1}catch(e){return 0}}
 async function allowMic(){
   try{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop());closeSheet();if(pend)mic(null,pend)}
-  catch(e){toast('اجازت نہیں ملی')}}
+  catch(e){toast('اجازت ابھی بند ہے، اوپر والے قدم دوبارہ دیکھیں')}}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&waitBack){waitBack=false;closeSheet();if(pend)setTimeout(()=>mic(null,pend),400)}});
 async function mic(btn,fn){
   if(!SR)return toast('اس براؤزر میں مائک نہیں چلتا');
@@ -269,7 +303,7 @@ function fill(id,t,numeric){
   else i.value+=(i.value?' ':'')+t.replace(/[.۔]+$/,'')}
 function searchSet(t){if(/آج/.test(t)&&/بیچ|رپورٹ|سودا|چیز|فروخت|بچت/.test(t))return report();q=t.replace(/[.۔]+$/,'');const i=$('#srch');if(i)i.value=q;const l=$('#cl');if(l)l.innerHTML=cl_html()}
 
-// کیلکولیٹر
+// ===== کیلکولیٹر =====
 let cx='';
 const KEYS=[['C','cl'],['⌫','op'],['÷','op'],['×','op'],['7'],['8'],['9'],['−','op'],['4'],['5'],['6'],['+','op'],['1'],['2'],['3'],['=','eq'],['0','w2'],['00'],['.']];
 function calc(){cx='';$('#calc').innerHTML=`<div class="ov" onclick="if(event.target==this)closeCalc()"><div class="box"><h2 class="c">🧮 کیلکولیٹر</h2><div class="cd" id="cd">0</div><div class="kp">${KEYS.map(k=>`<button class="${k[1]||''}" onclick="key('${k[0]}')">${k[0]}</button>`).join('')}</div><button class="btn grn" onclick="useCalc()">✅ رقم میں ڈالیں</button><button class="btn lite" onclick="closeCalc()">❌ بند کریں</button></div></div>`}
@@ -287,9 +321,95 @@ function key(k){const ops='+−×÷';
   else cx+=k;cshow()}
 function useCalc(){const v=cval();if(v===null||v<=0)return toast('پہلے حساب لگائیں');const i=$('#am');if(i)i.value=Math.round(v);closeCalc();toast('✅ رقم ڈال دی')}
 
-// 3D سکہ: بڑا، اندر سے بلیک، "چمکدار ببلو کھاتا"
+// ===== سنہری 3D خطاطی: ایک بار بنتی ہے، تصویر بن کر سکے پر لگتی ہے =====
+function gold3D(TEXT,W){
+  const cv=document.createElement('canvas');let ctx=cv.getContext('2d');
+  const fnt=px=>'400 '+px+'px "Gulzar","Noto Nastaliq Urdu","Noto Naskh Arabic",serif';
+  const hsl=(h,s,l)=>{h=((h%360)+360)%360;s/=100;l/=100;const c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2;let r=0,g=0,b=0;
+    if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}
+    return [Math.round((r+m)*255),Math.round((g+m)*255),Math.round((b+m)*255)]};
+  const PAL={R:[[0,hsl(38,85,12)],[0.18,hsl(42,90,28)],[0.35,hsl(45,95,48)],[0.5,hsl(40,80,24)],[0.65,hsl(48,95,62)],[0.82,hsl(52,98,82)],[0.92,hsl(55,90,94)],[1,[255,252,235]]],SD:hsl(36,75,8),SM:hsl(38,82,22),SB:hsl(42,88,42),SS:hsl(50,90,88)};
+  const ramp=(R,s)=>{if(s<0)s=0;if(s>1)s=1;for(let i=1;i<R.length;i++){if(s<=R[i][0]){const a=R[i-1],b=R[i],t=(s-a[0])/(b[0]-a[0]);return [a[1][0]+(b[1][0]-a[1][0])*t,a[1][1]+(b[1][1]-a[1][1])*t,a[1][2]+(b[1][2]-a[1][2])*t]}}return R[R.length-1][1]};
+  function distanceField(ins,W,H){const d=new Float32Array(W*H);let i,x,y,m;
+    for(i=0;i<d.length;i++)d[i]=ins[i]?1e6:0;
+    for(y=0;y<H;y++){for(x=0;x<W;x++){i=y*W+x;if(d[i]===0)continue;m=d[i];
+      if(x>0&&d[i-1]+1<m)m=d[i-1]+1;
+      if(y>0){if(d[i-W]+1<m)m=d[i-W]+1;if(x>0&&d[i-W-1]+1.414<m)m=d[i-W-1]+1.414;if(x<W-1&&d[i-W+1]+1.414<m)m=d[i-W+1]+1.414}
+      d[i]=m}}
+    for(y=H-1;y>=0;y--){for(x=W-1;x>=0;x--){i=y*W+x;if(d[i]===0)continue;m=d[i];
+      if(x<W-1&&d[i+1]+1<m)m=d[i+1]+1;
+      if(y<H-1){if(d[i+W]+1<m)m=d[i+W]+1;if(x<W-1&&d[i+W+1]+1.414<m)m=d[i+W+1]+1.414;if(x>0&&d[i+W-1]+1.414<m)m=d[i+W-1]+1.414}
+      d[i]=m}}
+    return d}
+  function blurMap(a,W,H,r){const t=new Float32Array(a.length);let x,y,s,c,ad,rm;
+    for(y=0;y<H;y++){const o=y*W;s=0;c=0;for(x=0;x<=r&&x<W;x++){s+=a[o+x];c++}
+      for(x=0;x<W;x++){t[o+x]=s/c;ad=x+r+1;rm=x-r;if(ad<W){s+=a[o+ad];c++}if(rm>=0){s-=a[o+rm];c--}}}
+    for(x=0;x<W;x++){s=0;c=0;for(y=0;y<=r&&y<H;y++){s+=t[y*W+x];c++}
+      for(y=0;y<H;y++){a[y*W+x]=s/c;ad=y+r+1;rm=y-r;if(ad<H){s+=t[ad*W+x];c++}if(rm>=0){s-=t[rm*W+x];c--}}}}
+  ctx.font=fnt(100);ctx.direction='rtl';
+  const tw=ctx.measureText(TEXT).width||1;
+  const fs=W*0.8/tw*100,sw=fs*0.012,depth=Math.max(10,Math.round(fs*0.085)),ar=-68*Math.PI/180,vx=Math.sin(ar),vy=Math.cos(ar),sdEm=0.1,sbEm=0.16,perK=0.0038;
+  ctx.font=fnt(fs);const tmm=ctx.measureText(TEXT);
+  const asc=tmm.actualBoundingBoxAscent||fs*0.8,desc=tmm.actualBoundingBoxDescent||fs*0.4;
+  const baseY=fs*0.05+asc+sw,H=Math.ceil(baseY+desc+depth+fs*(sdEm+sbEm)+6);
+  cv.width=W;cv.height=H;ctx=cv.getContext('2d');
+  const font=fnt(fs);
+  const drawBase=c=>{c.font=font;c.direction='rtl';c.textAlign='center';c.textBaseline='alphabetic';c.lineJoin='round';c.lineWidth=sw;c.strokeStyle=c.fillStyle;c.fillText(TEXT,W/2,baseY);if(sw>0.4)c.strokeText(TEXT,W/2,baseY)};
+  const drawLayer=(c,i)=>{const sc=1-perK*(i/depth),cxm=W/2,vyp=baseY*1.5;c.save();c.setTransform(sc,0,0,sc,cxm-cxm*sc+vx*i,vyp-vyp*sc+vy*i);drawBase(c);c.restore()};
+  ctx.save();ctx.shadowColor='rgba(0,0,0,0.45)';ctx.shadowBlur=fs*0.2;ctx.shadowOffsetX=vx*fs*sdEm*0.7;ctx.shadowOffsetY=vy*fs*sdEm*0.7+fs*0.03;ctx.fillStyle='#151008';drawLayer(ctx,depth);ctx.restore();
+  ctx.save();ctx.shadowColor='rgba(0,0,0,0.6)';ctx.shadowBlur=fs*sbEm;ctx.shadowOffsetX=vx*fs*sdEm*1.1;ctx.shadowOffsetY=vy*fs*sdEm*1.1;ctx.fillStyle='#0d0904';drawLayer(ctx,depth);ctx.restore();
+  const mc=document.createElement('canvas');mc.width=W;mc.height=H;
+  const mctx=mc.getContext('2d',{willReadFrequently:true});mctx.fillStyle='#fff';drawBase(mctx);
+  const md=mctx.getImageData(0,0,W,H).data,n=W*H,ins=new Uint8Array(n);let p,x,y;
+  for(p=0;p<n;p++)ins[p]=md[p*4+3]>127?1:0;
+  const d=distanceField(ins,W,H),R=Math.max(3,fs*0.062),amp=R*1.25,h=new Float32Array(n);
+  for(p=0;p<n;p++){let t=d[p]/R;if(t>1)t=1;h[p]=Math.sqrt(1-(1-t)*(1-t))*amp}
+  blurMap(h,W,H,2);blurMap(h,W,H,1);
+  const ec=document.createElement('canvas');ec.width=W;ec.height=H;
+  const ectx=ec.getContext('2d',{willReadFrequently:true});ectx.fillStyle='#fff';
+  for(let ei=depth;ei>=1;ei--)drawLayer(ectx,ei);
+  const ed=ectx.getImageData(0,0,W,H).data,out2=new Uint8Array(n);
+  for(p=0;p<n;p++)out2[p]=ins[p]?0:1;
+  const d2=distanceField(out2,W,H),d2s=new Float32Array(d2);
+  blurMap(d2s,W,H,3);blurMap(d2s,W,H,3);
+  let lx=0.35,ly=0.65,lz=0.72;const ll=Math.sqrt(lx*lx+ly*ly+lz*lz);lx/=ll;ly/=ll;lz/=ll;
+  const sideRamp=v=>{let a,b,q;if(v<0.5){a=PAL.SD;b=PAL.SM;q=v/0.5}else{a=PAL.SM;b=PAL.SB;q=(v-0.5)/0.5}return [a[0]+(b[0]-a[0])*q,a[1]+(b[1]-a[1])*q,a[2]+(b[2]-a[2])*q]};
+  const si=ctx.createImageData(W,H),sd=si.data,SS=PAL.SS;
+  for(y=1;y<H-1;y++){for(x=1;x<W-1;x++){p=y*W+x;const ea=ed[p*4+3];if(ea===0)continue;if(md[p*4+3]>250)continue;
+    let sgx=(d2s[p+1]-d2s[p-1])*0.5,sgy=(d2s[p+W]-d2s[p-W])*0.5,sgl=Math.sqrt(sgx*sgx+sgy*sgy);
+    if(sgl<0.02){sgx=vx;sgy=vy;sgl=1}
+    const snx=sgx/sgl,sny=-sgy/sgl;let td=d2[p]/depth;if(td>1)td=1;
+    let dl=(snx*0.62+sny*0.55)*0.5+0.5;if(dl<0)dl=0;if(dl>1)dl=1;
+    const c2=sideRamp(0.1+0.9*Math.pow(dl,1.15)),spv=Math.pow(Math.max(0,snx*0.7+sny*0.7),16)*0.55,dk=0.6+0.4*(1-Math.pow(td,0.9)),so=p*4;
+    sd[so]=Math.min(255,c2[0]*dk+spv*SS[0]);sd[so+1]=Math.min(255,c2[1]*dk+spv*SS[1]);sd[so+2]=Math.min(255,c2[2]*dk+spv*SS[2]);sd[so+3]=ea}}
+  const sc2=document.createElement('canvas');sc2.width=W;sc2.height=H;sc2.getContext('2d').putImageData(si,0,0);ctx.drawImage(sc2,0,0);
+  const out=ctx.createImageData(W,H),od=out.data;
+  for(y=1;y<H-1;y++){for(x=1;x<W-1;x++){p=y*W+x;const a=md[p*4+3];if(a===0)continue;
+    const gx=(h[p+1]-h[p-1])*0.5,gy=(h[p+W]-h[p-W])*0.5;let nx=-gx,ny=gy,nz=1;const nl=Math.sqrt(nx*nx+ny*ny+1);
+    nx/=nl;ny/=nl;nz/=nl;
+    const s=0.58+ny*0.42+nx*0.15+0.08*(0.5-y/H)+0.05*Math.sin((x/W)*8.2),c=ramp(PAL.R,s);
+    const dot=Math.max(0,nx*lx+ny*ly+nz*lz),dot2=Math.max(0,-nx*0.5+ny*0.5+nz*0.7);
+    const spc=Math.pow(dot,36)*0.95+Math.pow(dot,8)*0.12+Math.pow(dot2,28)*0.45,tt=d[p]/R,gk=1-(tt<1?Math.exp(-Math.pow((tt-0.3)/0.09,2))*0.9*0.96:0),o=p*4;
+    od[o]=Math.min(255,c[0]*gk+spc*215);od[o+1]=Math.min(255,c[1]*gk+spc*235);od[o+2]=Math.min(255,c[2]*gk+spc*255);od[o+3]=a}}
+  const fc=document.createElement('canvas');fc.width=W;fc.height=H;fc.getContext('2d').putImageData(out,0,0);ctx.drawImage(fc,0,0);
+  return cv}
+
+const COIN_TXT='ببلو کھاتا',COIN_KEY='coin3d_v2';
+let COINIMG='';try{COINIMG=localStorage.getItem(COIN_KEY)||''}catch(e){}
+const coinFace=()=>COINIMG?`<img class="ci" alt="${COIN_TXT}" src="${COINIMG}">`:`<b class="cf">${COIN_TXT}</b>`;
+function build3D(){
+  const fl=(document.fonts&&document.fonts.load)?document.fonts.load('400 60px "Gulzar"',COIN_TXT):Promise.resolve();
+  Promise.race([fl.catch(()=>{}),new Promise(r=>setTimeout(r,2500))]).then(()=>{
+    try{
+      COINIMG=gold3D(COIN_TXT,640).toDataURL('image/png');
+      if(document.fonts&&document.fonts.check&&document.fonts.check('400 60px "Gulzar"',COIN_TXT)){try{localStorage.setItem(COIN_KEY,COINIMG)}catch(e){}}
+      document.querySelectorAll('.coin .f').forEach(f=>{f.innerHTML=coinFace()})
+    }catch(e){}})}
+if(!COINIMG)build3D();
+
+// 3D سکہ: بڑا، اندر سے بلیک، سنہری 3D "ببلو کھاتا"
 function coinHTML(sm){
-  const face='<b>چمکدار</b><b>ببلو کھاتا</b>';
+  const face=coinFace();
   return `<div class="coin${sm?' sm':''}">${[-6,-4,-2,0,2,4,6].map(z=>`<div class="e" style="transform:translateZ(${sm?z/2:z}px)"></div>`).join('')}<div class="f fr">${face}</div><div class="f bk">${face}</div></div>`}
 
 // وقت
@@ -344,11 +464,21 @@ function acc(cid){
   const td=sum(D),tl=sum(L);
   let b=0,st=0;es.slice().sort((x,y)=>x.ts-y.ts).forEach(e=>{if(e.type=='d'){if(b<=0)st=e.ts;b+=e.amt}else b-=e.amt});
   return{td,tl,b:td-tl,first:D.length?Math.min(...D.map(e=>e.ts)):0,lastL:L.length?Math.max(...L.map(e=>e.ts)):0,start:td-tl>0?st:0}}
-function go(v){view=v;closeSheet();render(true);scrollTo(0,0)}
+function go(v){view=v;closeSheet();renderNow(true);scrollTo(0,0)}
 function counts(){document.querySelectorAll('.amt[data-v],.bx b[data-v]').forEach(el=>{
   const v=+el.dataset.v;if(!v)return;const t0=performance.now();
   (function f(t){const p=Math.min((t-t0)/550,1);el.textContent=num(v*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)})(t0)})}
-function render(anim){
+
+// ===== رینڈر: بار بار نہیں، اور بٹن دباتے یا لکھتے وقت نہیں =====
+let rq=0,rqA=false;
+function render(anim){rqA=rqA||!!anim;if(rq)return;rq=setTimeout(doRender,30)}
+function editing(){const e=document.activeElement,a=$('#app');return !!(e&&e.tagName=='INPUT'&&a&&a.contains(e))}
+function doRender(){
+  rq=0;
+  if(!uid){rqA=false;return}
+  if(pressing||editing()){rq=setTimeout(doRender,120);return}
+  const a=rqA;rqA=false;renderNow(a)}
+function renderNow(anim){
   const a=$('#app');
   if(!me){a.innerHTML='<div class="page c" style="padding-top:60px"><div style="font-size:70px;animation:float 3s ease-in-out infinite">📒</div><h2>⏳ کھل رہا ہے...</h2></div>';return}
   if(expired()){showFee=true;closeSheet();a.innerHTML=feeHTML();return}
@@ -366,7 +496,7 @@ function morning(){
   if(!l.length)return speak('کوئی پرانا ادھار نہیں ہے');
   speak(l.map(c=>c.name+' نے '+num(bs[c.id])+' روپے نہیں دیے، '+daysDiff(acc(c.id).start)+' دن ہو گئے').join('۔ '))}
 
-// آج کی رپورٹ: فروخت، بچت، ادھار، وصولی، کُل بقایا (کھلتے ہی بولتی ہے، 🎤 بٹن سے دوبارہ)
+// آج کی رپورٹ: فروخت، بچت، ادھار، وصولی، کُل بقایا
 function report(sp){
   const t0=new Date().setHours(0,0,0,0),nm=id=>{const c=custs.find(x=>x.id==id);return c?c.name:''};
   const es=ents.filter(e=>!e.del&&e.ts>=t0).sort((a,b)=>b.ts-a.ts),D=es.filter(e=>e.type=='d'),L=es.filter(e=>e.type=='l'),td=sum(D),tl=sum(L);
@@ -427,7 +557,7 @@ function saveCust(){
   db.collection('users/'+uid+'/customers').add({name:n,del:false,ts:Date.now()});closeSheet();toast('✅ '+n+' شامل ہو گئے')}
 function delCust(id){
   const c=custs.find(x=>x.id==id),a=acc(id);
-  const run=()=>{db.doc('users/'+uid+'/customers/'+id).update({del:true,delAt:Date.now()});view={n:'list'};render(true);toast('حال ہی میں ڈیلیٹ میں چلا گیا')};
+  const run=()=>{db.doc('users/'+uid+'/customers/'+id).update({del:true,delAt:Date.now()});view={n:'list'};renderNow(true);toast('حال ہی میں ڈیلیٹ میں چلا گیا')};
   if(a.b>0){const t='کیا '+c.name+' کے پورے پیسے مل گئے؟';speak(t);cb=run;
     sheet(`<h2 class="c">${esc(t)}<br><small class="r">ابھی ${num(a.b)} روپے باقی ہیں</small></h2><div class="row"><button class="btn grn" onclick="closeSheet();cb()">✅ ہاں، ختم کریں</button><button class="btn red" onclick="closeSheet()">❌ نہیں</button></div>`)}
   else ask('اس گاہک کو ڈیلیٹ کریں؟','🗑️ ہاں، ڈیلیٹ',run)}
@@ -445,7 +575,7 @@ function custHTML(anim){
    <div class="bx big${a.b<=0?' ok':''}" style="--d:.2s"><small>${a.b>0?'باقی لینے ہیں':a.b<0?'زیادہ دیے (ہم نے دینے ہیں)':'حساب صاف'}</small><b data-v="${Math.abs(a.b)}">${num(Math.abs(a.b))}</b></div>
   </div>
   ${al?`<div class="c"><div style="background:#dc2626;color:#fff;border-radius:14px;padding:2px 14px;display:inline-block;font-size:14px;margin-top:6px">⚠️ ${days} دن سے ادھار واپس نہیں ہوا</div></div>`:''}
-  ${a.b>0?`<button class="ib" style="width:100%;margin-top:6px;font-size:16px" onclick="wa('${c.id}')">📲 واٹس ایپ یاددہانی</button>`:''}
+  ${a.b>0?`<button class="wab" onclick="wa('${c.id}')">💌 واٹس ایپ یاددہانی</button><div class="wah">واٹس ایپ کھلے تو اپنے فون کے رابطوں سے اس گاہک کو چنیں</div>`:''}
   </div><div class="wrap">
   <div class="row"><button class="btn red" onclick="entSheet('d')">🔴 + ادھار</button><button class="btn grn" onclick="entSheet('l')">🟢 پیسے ملے (کاٹیں)</button><button class="btn sp" onclick="speakAcc('${c.id}')">🔊</button></div>
   ${es.length?es.map((e,i)=>{const old=e.type=='d'&&daysDiff(e.ts)>=ALERT_DAYS&&a.b>0;
@@ -469,8 +599,32 @@ function saveEnt(t){
       speak(m);return ask(esc(m),'✅ ہاں، ٹھیک ہے',save,'grn')}}
   save()}
 function delEnt(id){ask('اس انٹری کو ڈیلیٹ کریں؟','🗑️ ہاں، ڈیلیٹ',()=>{db.doc('users/'+uid+'/entries/'+id).update({del:true,delAt:Date.now()});toast('حال ہی میں ڈیلیٹ میں چلی گئی')})}
-function wa(cid){const c=custs.find(x=>x.id==cid),b=balMap()[cid]||0;if(!c)return;
-  open('https://wa.me/?text='+encodeURIComponent(`السلام علیکم ${c.name} صاحب،\nآپ کا بقایا ${num(b)} روپے ہے۔\nبراہ کرم جلد ادائیگی کریں۔\nشکریہ — ${me.name}`))}
+
+// ===== واٹس ایپ یاددہانی: خوبصورت کارڈ جیسا پیغام، دنوں کے حساب سے نرم لہجہ =====
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function waMsg(c,b,days){
+  const L='🌿━━━━━━━━━━━━🌿';
+  let open,mid,end,thx;
+  if(days<15){
+    open=pick(['امید ہے آپ بخیر ہوں گے۔','اللہ آپ کو ہمیشہ خوش رکھے۔','آپ کے بھروسے اور مہربانی کا بہت شکریہ۔']);
+    mid='آپ کے کھاتے میں یہ رقم باقی ہے:';
+    end=pick(['جب آپ کو سہولت ہو، ادا فرما دیجیے گا۔','فرصت ملنے پر ادائیگی فرما دیجیے گا، بڑی مہربانی۔','آپ کی سہولت کے مطابق، کوئی جلدی نہیں۔']);
+    thx='آپ کا بہت شکریہ 🤝'}
+  else if(days<30){
+    open=pick(['اللہ آپ کو خوش رکھے۔','امید ہے آپ اور گھر والے خیریت سے ہوں گے۔','آپ سے ہمیشہ اچھا تعلق رہا ہے۔']);
+    mid='آپ کے کھاتے کو کچھ دن ('+days+') ہو گئے ہیں، رقم یہ ہے:';
+    end=pick(['ہو سکے تو اس ہفتے ادا فرما دیجیے گا، بڑی مہربانی ہوگی۔','جب بھی ممکن ہو ادائیگی فرما دیں، آپ کا احسان ہوگا۔','اگر آسانی ہو تو جلد ادا کر دیجیے گا، شکریہ۔']);
+    thx='جزاک اللہ خیراً 🤲'}
+  else{
+    open=pick(['آپ ہمارے پرانے اور قدردان گاہک ہیں۔','آپ کا ساتھ ہمارے لیے بہت اہم ہے۔','اللہ آپ کو آسانیاں عطا فرمائے۔']);
+    mid='آپ کے کھاتے کو '+days+' دن ہو چکے ہیں، باقی رقم یہ ہے:';
+    end=pick(['اگر کوئی مجبوری ہو تو بلا جھجک بتا دیجیے گا، ورنہ جب ممکن ہو ادا فرما دیں۔','آپ کی سہولت ہمیں عزیز ہے، جب ممکن ہو ادائیگی فرما دیجیے گا۔','کوئی پریشانی ہو تو ہمیں بتا دیں، مل کر آسانی نکال لیں گے۔']);
+    thx='آپ کے تعاون کا شکریہ، اللہ آپ کو برکت دے 🤲'}
+  return `${L}\n📒 *${me.name}*\n${L}\n\nالسلام علیکم 🌸\nمحترم *${c.name} صاحب*\n\n${open}\n${mid}\n\n💰 *${num(b)} روپے*\n\n${end}\n${thx}\n\n${L}\n✍️ *${me.name}*\n📒 ${APP_NAME}`}
+function wa(cid){
+  const c=custs.find(x=>x.id==cid),b=balMap()[cid]||0;if(!c)return;
+  const s=acc(cid).start,days=s?daysDiff(s):0;
+  open('https://wa.me/?text='+encodeURIComponent(waMsg(c,b,days)),'_blank')}
 
 // ڈیلیٹ شدہ
 function trashHTML(anim){
@@ -543,7 +697,7 @@ function tog(id,op){ask(op?'یہ کھاتہ 30 دن کے لیے کھولیں؟':
 
 // شروع
 function userStart(u){
-  uid=u.uid;custs=[];ents=[];sales=[];view={n:'list'};q='';first=true;me=null;render();const P='users/'+uid;
+  uid=u.uid;custs=[];ents=[];sales=[];view={n:'list'};q='';first=true;me=null;renderNow(false);const P='users/'+uid;
   unsubs=[db.doc(P).onSnapshot(s=>{me=s.data()||null;render(first&&!!me);if(me)first=false}),
   db.collection(P+'/customers').onSnapshot(s=>{custs=s.docs.map(d=>({id:d.id,...d.data()}));if(me)render(false)}),
   db.collection(P+'/entries').onSnapshot(s=>{ents=s.docs.map(d=>({id:d.id,...d.data()}));if(me)render(false)}),
@@ -554,7 +708,7 @@ if(ADM){
   aauth.onAuthStateChanged(u=>{unsubs.forEach(f=>f());unsubs=[];closeSheet();adminAnim=true;
     if(u&&u.email==ADMIN)adminStart();else $('#app').innerHTML=adminLoginHTML()})
 }else{
-  auth.onAuthStateChanged(u=>{unsubs.forEach(f=>f());unsubs=[];me=null;uid=null;closeSheet();closeCalc();
+  auth.onAuthStateChanged(u=>{unsubs.forEach(f=>f());unsubs=[];me=null;uid=null;clearTimeout(rq);rq=0;closeSheet();closeCalc();
     if(u&&u.email==ADMIN){auth.signOut();return}
     if(!u){authMode='login';$('#app').innerHTML=authHTML();if(deferredInstall){const b=$('#installBtn');if(b)b.style.display='block'}return}
     userStart(u)});
