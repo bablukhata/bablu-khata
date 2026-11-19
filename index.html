@@ -761,6 +761,75 @@ if('serviceWorker'in navigator){const had=!!navigator.serviceWorker.controller;
   navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had&&!window._rl){window._rl=1;location.reload()}});
   addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
 </script>
+  <!-- ===== ببلو کھاتا: پیچ بلاک =====
+اسے اپنی فائل میں آخری </script> کے بعد اور </body> سے پہلے پیسٹ کریں۔ اپنا باقی کوڈ مت چھیڑیں۔ -->
+<style>
+/* کچھ فونز فونٹ خود بڑا چھوٹا کر دیتے ہیں، اس سے ڈیزائن ہر فون پر ایک جیسا رہتا ہے */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+</style>
+<script>
+(function(){
+/* 1) فون کی "اینیمیشن کم کرو" سیٹنگ سے ایپ کی اینیمیشن (سکہ، مائک کی لہریں، دھڑکن) تیز نہ ہوں:
+      یہ پرانی لائن @media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important}} کو ہٹا دیتا ہے */
+try{
+  Array.prototype.forEach.call(document.styleSheets,function(s){
+    try{
+      for(var i=s.cssRules.length-1;i>=0;i--){
+        var r=s.cssRules[i];
+        if(r.media&&/prefers-reduced-motion/.test(r.media.mediaText))s.deleteRule(i);
+      }
+    }catch(e){}
+  });
+}catch(e){}
+
+/* 2) مائک کی اجازت کی ہدایت: ایپ کی حالت دیکھ کر صحیح قدم دکھائے، اور نیچے کھلا فارم بند نہ ہو */
+var UA=navigator.userAgent||'';
+var STANDALONE=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+var INAPP=/FBAN|FBAV|FB_IAB|Instagram|MicroMessenger|; wv\)/.test(UA);
+var LT=function(t){return '<span dir="ltr">'+t+'</span>'};
+
+window.permSheet=function(fn,why){
+  pend=fn;
+  var st;
+  if(INAPP){
+    st=['اوپر ⋮ (تین نقطے) دبائیں','"Chrome میں کھولیں" چنیں','وہاں مائک 🎤 دبائیں اور '+LT('Allow')+' کریں'];
+  }else if(why=='google'){
+    st=['فون کی '+LT('Settings')+' ← '+LT('Apps')+' ← '+LT('Permissions')+' ← '+LT('Microphone'),LT('Google')+' (یا '+LT('Google Go')+') کو '+LT('Allow')+' کریں','واپس آ کر "دوبارہ کوشش" دبائیں'];
+  }else if(STANDALONE){
+    st=['فون کی '+LT('Settings')+' ← '+LT('Apps')+' ← '+LT('Permissions')+' ← '+LT('Microphone'),LT('Chrome')+' کو '+LT('Allow only while using the app')+' کریں',LT('Google')+' (یا '+LT('Google Go')+') کو بھی '+LT('Allow')+' کریں','یہاں واپس آ کر "دوبارہ کوشش" دبائیں'];
+  }else{
+    st=['اوپر ایڈریس کے ساتھ 🔒 دبائیں',LT('Permissions')+' کھولیں اور '+LT('Reset permissions')+' دبائیں','صفحہ دوبارہ کھولیں، مائک دبائیں اور '+LT('Allow')+' دبائیں','پھر بھی نہ آئے تو '+LT('Settings')+' ← '+LT('Apps')+' ← '+LT('Permissions')+' ← '+LT('Microphone')+' ← '+LT('Chrome')+' ← '+LT('Allow')];
+  }
+  var nums=['1️⃣','2️⃣','3️⃣','4️⃣'];
+  $('#mc').innerHTML='<div class="ov"><div class="box"><h2 class="c">🎤 مائک کی اجازت چاہیے</h2>'
+    +'<div class="steps">'+st.map(function(t,i){return '<div>'+nums[i]+' '+t+'</div>'}).join('')+'</div>'
+    +'<button class="btn grn" onclick="allowMic()">✅ دوبارہ کوشش</button>'
+    +(why=='google'?'<a class="btn" style="text-align:center" href="intent:#Intent;package=com.google.android.apps.searchlite;end">🔎 '+LT('Google Go')+' کھولیں</a>':'')
+    +'<button class="btn org" onclick="kbMic()">⌨️ کی بورڈ کے 🎤 سے بول کر لکھیں</button>'
+    +'<button class="btn lite" onclick="hideMic()">❌ بند کریں</button></div></div>';
+};
+
+/* دوبارہ کوشش: صرف مائک والی ہدایت بند ہو، نیچے کھلا ادھار/فروخت کا فارم بند نہ ہو */
+window.allowMic=async function(){
+  try{
+    var s=await navigator.mediaDevices.getUserMedia({audio:true});
+    s.getTracks().forEach(function(t){t.stop()});
+    hideMic();
+    if(pend)mic(null,pend);
+  }catch(e){toast('اجازت ابھی بند ہے، اوپر والے قدم دوبارہ دیکھیں')}
+};
+
+/* مائک بند ہو تب بھی کام نہ رکے: کی بورڈ کا اپنا مائک (اس کی اجازت ویب سائٹ سے الگ ہے) */
+window.kbMic=function(){
+  hideMic();
+  setTimeout(function(){
+    var i=document.querySelector('#sheet input')||document.querySelector('#srch');
+    if(i){i.focus();toast('کی بورڈ کا 🎤 دبا کر بولیں')}
+  },150);
+};
+})();
+</script>
+
 </body>
 </html>
 
