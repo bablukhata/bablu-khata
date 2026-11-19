@@ -9,7 +9,7 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400..700&family=Gulzar&display=swap" rel="stylesheet">
-<title>ببلو کھاتا</title>
+<title>ڈیجیٹل روزگار</title>
 <style>
 @font-face{font-family:'Jameel';src:local('Jameel Noori Nastaleeq'),url('jameel.ttf')}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -108,7 +108,7 @@ a{color:inherit;text-decoration:none}
 .footer{text-align:center;padding:16px 10px 8px;color:#64748b;font-size:14px;line-height:2.2;border-top:1px solid #e2e8f0;margin-top:20px}
 .footer b{color:#0f766e;font-size:17px}
 .footer a{color:#0f766e}
-/* سکہ: بڑا، اندر سے بلیک، سنہری 3D خطاطی "ببلو کھاتا" */
+/* سکہ: بڑا، اندر سے بلیک، سنہری 3D خطاطی "ببلو" */
 .stage{perspective:900px;height:270px;display:flex;justify-content:center;align-items:center;margin-top:10px}
 .stage.bump{animation:bump .7s ease}
 .coin{--s:215px;position:relative;width:var(--s);height:var(--s);transform-style:preserve-3d;animation:spin 8s linear infinite;flex:none}
@@ -169,7 +169,7 @@ const AA=firebase.initializeApp(CFG,'adm'); // ایڈمن کا الگ سیشن
 const auth=firebase.auth(),aauth=AA.auth(),db=firebase.firestore(),adb=AA.firestore(),FV=firebase.firestore.FieldValue,TSP=firebase.firestore.Timestamp;
 db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
 
-const ADMIN='admin@bablu.app',DAY=864e5,PAY_NUM='03012207137',WA_NUM='03480329691',APP_NAME='ببلو کھاتا',ALERT_DAYS=15;
+const ADMIN='admin@bablu.app',DAY=864e5,PAY_NUM='03012207137',WA_NUM='03480329691',APP_NAME='ڈیجیٹل روزگار',ALERT_DAYS=15;
 const ADM=location.hash=='#admin';
 let uid,me,custs=[],ents=[],sales=[],users=[],unsubs=[],view={n:'list'},q='',authMode='login',cb,showFee=false,first=true,deferredInstall=null;
 let base=JSON.parse(localStorage.getItem('bt')||'null');
@@ -390,7 +390,7 @@ function gold3D(TEXT,W){
       for(y=0;y<H;y++){a[y*W+x]=s/c;ad=y+r+1;rm=y-r;if(ad<H){s+=t[ad*W+x];c++}if(rm>=0){s-=t[rm*W+x];c--}}}}
   ctx.font=fnt(100);ctx.direction='rtl';
   const tw=ctx.measureText(TEXT).width||1;
-  const fs=W*0.8/tw*100,sw=fs*0.012,depth=Math.max(10,Math.round(fs*0.085)),ar=-68*Math.PI/180,vx=Math.sin(ar),vy=Math.cos(ar),sdEm=0.1,sbEm=0.16,perK=0.0038;
+  const fs=Math.min(W*0.8/tw*100,W*0.42),sw=fs*0.012,depth=Math.max(10,Math.round(fs*0.085)),ar=-68*Math.PI/180,vx=Math.sin(ar),vy=Math.cos(ar),sdEm=0.1,sbEm=0.16,perK=0.0038;
   ctx.font=fnt(fs);const tmm=ctx.measureText(TEXT);
   const asc=tmm.actualBoundingBoxAscent||fs*0.8,desc=tmm.actualBoundingBoxDescent||fs*0.4;
   const baseY=fs*0.05+asc+sw,H=Math.ceil(baseY+desc+depth+fs*(sdEm+sbEm)+6);
@@ -436,7 +436,7 @@ function gold3D(TEXT,W){
   const fc=document.createElement('canvas');fc.width=W;fc.height=H;fc.getContext('2d').putImageData(out,0,0);ctx.drawImage(fc,0,0);
   return cv}
 
-const COIN_TXT='ببلو کھاتا',COIN_KEY='coin3d_v2';
+const COIN_TXT='ببلو',COIN_KEY='coin3d_v3';
 let COINIMG='';try{COINIMG=localStorage.getItem(COIN_KEY)||''}catch(e){}
 const coinFace=()=>COINIMG?`<img class="ci" alt="${COIN_TXT}" src="${COINIMG}">`:`<b class="cf">${COIN_TXT}</b>`;
 function build3D(){
@@ -449,7 +449,7 @@ function build3D(){
     }catch(e){}})}
 if(!COINIMG)build3D();
 
-// 3D سکہ: بڑا، اندر سے بلیک، سنہری 3D "ببلو کھاتا"
+// 3D سکہ: بڑا، اندر سے بلیک، سنہری 3D "ببلو"
 function coinHTML(sm){
   const face=coinFace();
   return `<div class="coin${sm?' sm':''}">${[-6,-4,-2,0,2,4,6].map(z=>`<div class="e" style="transform:translateZ(${sm?z/2:z}px)"></div>`).join('')}<div class="f fr">${face}</div><div class="f bk">${face}</div></div>`}
@@ -696,11 +696,11 @@ function purge(){
 // فیس
 function feeHTML(){
   const card=(t,ico)=>`<div class="pay"><div style="font-size:17px">${ico} ${t}</div><b dir="ltr" class="pn">${PAY_NUM}</b><button class="btn lite" style="font-size:17px" onclick="cpNum()">📋 نمبر کاپی کریں</button></div>`;
-  return `<div class="page anim c"><div style="font-size:70px;margin-top:30px;animation:float 3s ease-in-out infinite">🔒</div><h1 style="margin:0;font-size:24px">آپ کا کھاتا بند ہے</h1><p class="sub">ماہانہ فیس <b class="r">700 روپے</b></p><div class="wrap">${card('JazzCash','💚')}${card('Easypaisa','💛')}
+  return `<div class="page anim c"><div style="font-size:70px;margin-top:30px;animation:float 3s ease-in-out infinite">🔒</div><h1 style="margin:0;font-size:24px">آپ کا کھاتا بند ہے</h1><p class="sub">ماہانہ فیس <b class="r">500 روپے</b></p><div class="wrap">${card('JazzCash','💚')}${card('Easypaisa','💛')}
   <button class="btn grn" onclick="paidWA()">💬 واٹس ایپ پر بتائیں</button><small style="color:#64748b">پیسے بھیج کر واٹس ایپ پر اطلاع دیں۔ آپ کا کھاتا کھول دیا جائے گا۔</small>
   <button class="lnk" onclick="location.reload()">🔄 دوبارہ چیک کریں</button><button class="lnk" onclick="logout()">🚪 باہر نکلیں</button></div>${footerHTML()}</div>`}
 function cpNum(){try{navigator.clipboard.writeText(PAY_NUM);toast('✅ نمبر کاپی ہو گیا')}catch(e){toast(PAY_NUM)}}
-function paidWA(){open('https://wa.me/92'+WA_NUM.slice(1)+'?text='+encodeURIComponent(`السلام علیکم، میں نے 700 روپے فیس بھیج دی ہے۔\nنام: ${me?me.name:''}\nنمبر: ${me?me.phone:''}`))}
+function paidWA(){open('https://wa.me/92'+WA_NUM.slice(1)+'?text='+encodeURIComponent(`السلام علیکم، میں نے 500 روپے فیس بھیج دی ہے۔\nنام: ${me?me.name:''}\nنمبر: ${me?me.phone:''}`))}
 
 // ایڈمن (الگ سیشن، دکاندار والے سے نہیں ٹکراتا)
 function adminLoginHTML(){return `<div class="page anim c" style="padding-top:40px"><div style="font-size:70px">🛠️</div><h1 style="margin:0;font-size:24px">ایڈمن پینل</h1><div class="wrap"><input id="ap" class="in" type="password" placeholder="ایڈمن پاس ورڈ"><div id="er" class="er"></div><button id="go" class="btn" onclick="adminLogin()">✅ اندر جائیں</button><button class="lnk" onclick="location.href=location.pathname">↩️ دکاندار والا کھولیں</button></div></div>`}
@@ -761,7 +761,7 @@ if('serviceWorker'in navigator){const had=!!navigator.serviceWorker.controller;
   navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had&&!window._rl){window._rl=1;location.reload()}});
   addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
 </script>
-  <!-- ===== ببلو کھاتا: پیچ بلاک =====
+<!-- ===== ڈیجیٹل روزگار: پیچ بلاک =====
 اسے اپنی فائل میں آخری </script> کے بعد اور </body> سے پہلے پیسٹ کریں۔ اپنا باقی کوڈ مت چھیڑیں۔ -->
 <style>
 /* کچھ فونز فونٹ خود بڑا چھوٹا کر دیتے ہیں، اس سے ڈیزائن ہر فون پر ایک جیسا رہتا ہے */
@@ -829,8 +829,35 @@ window.kbMic=function(){
 };
 })();
 </script>
+<script>
+/* ===== فون کا بیک بٹن: پہلے صرف کھلی اسکرین/فارم بند ہو، ایپ تب ہی بند ہو جب کچھ کھلا نہ ہو ===== */
+(function(){
+  function openWhat(){
+    if(($('#mc').innerHTML||'').trim())return 'mic';
+    if(($('#calc').innerHTML||'').trim())return 'calc';
+    if(($('#sheet').innerHTML||'').trim())return 'sheet';
+    if(!ADM&&uid&&view&&view.n!='list')return 'view';
+    if(!ADM&&!uid&&authMode!='login')return 'auth';
+    return '';
+  }
+  function arm(){
+    try{if(!history.state||history.state.g!==1)history.pushState({g:1},'')}catch(e){}
+  }
+  try{history.replaceState({g:0},'')}catch(e){}
+  /* ہر ٹچ پر چیک: بیک کے لیے ایک "پہرے دار" انٹری ہمیشہ موجود رہے */
+  addEventListener('pointerdown',arm,true);
+  addEventListener('popstate',function(){
+    var o=openWhat();
+    if(!o){history.back();return}
+    if(o=='mic')cancelMic();
+    else if(o=='calc')closeCalc();
+    else if(o=='sheet')closeSheet();
+    else if(o=='view')go({n:'list'});
+    else setMode('login');
+    arm();
+  });
+})();
+</script>
 
 </body>
 </html>
-
-
