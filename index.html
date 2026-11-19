@@ -138,6 +138,8 @@ a{color:inherit;text-decoration:none}
 .mic:active{background:#7dd3fc;transform:scale(.88)}
 .ib:active{background:#ffffff66;transform:scale(.94)}
 .del:active{background:#fca5a5;transform:scale(.9)}
+.lnk:active{opacity:.5;transform:scale(.95)}
+.kp button:active{background:#99f6e4}
 /* واٹس ایپ یاددہانی بٹن */
 .wab{display:block;width:100%;margin-top:10px;border:0;border-radius:16px;padding:2px 12px;font-size:18px;line-height:2.2;color:#fff;background:linear-gradient(135deg,#25d366,#128c7e);box-shadow:0 3px 0 #0b6b5e;cursor:pointer;transition:transform .08s,box-shadow .08s}
 .wab:active{transform:translateY(3px);box-shadow:none}
@@ -197,7 +199,7 @@ function em(e){const c=e.code||'';
   if(c.includes('too-many'))return 'بہت کوششیں ہو گئیں۔ تھوڑی دیر بعد کریں';
   if(c.includes('permission'))return 'اجازت نہیں ہے';
   return 'کچھ گڑبڑ ہو گئی'}
-function footerHTML(){return `<div class="footer"><b>📒 ${APP_NAME}</b><br>واٹس ایپ: <a href="https://wa.me/92${WA_NUM.slice(1)}">${WA_NUM}</a><br><small>آپ کا ڈیجیٹل حساب کتاب</small><br><button class="lnk" onclick="speak(GREET)">🔊 السلام علیکم</button>${deferredInstall?'<button class="lnk" onclick="installApp()">📲 ایپ ہوم اسکرین پر لگائیں</button>':''}</div>`}
+function footerHTML(){return `<div class="footer"><b>📒 ${APP_NAME}</b><br>واٹس ایپ: <a href="https://wa.me/92${WA_NUM.slice(1)}">${WA_NUM}</a><br><small>آپ کا ڈیجیٹل حساب کتاب</small><br><button class="lnk snd" onclick="speak(GREET)">🔊 السلام علیکم</button>${deferredInstall?'<button class="lnk" onclick="installApp()">📲 ایپ ہوم اسکرین پر لگائیں</button>':''}</div>`}
 async function installApp(){
   if(!deferredInstall)return toast('ایپ پہلے سے انسٹال ہے یا انسٹال نہیں ہو سکتی');
   deferredInstall.prompt();const r=await deferredInstall.userChoice;
@@ -217,12 +219,14 @@ function tick(){
     AC=AC||new (window.AudioContext||window.webkitAudioContext)();
     if(AC.state=='suspended')AC.resume();
     const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();
-    o.type='triangle';
-    o.frequency.setValueAtTime(1500,t);o.frequency.exponentialRampToValueAtTime(600,t+.04);
-    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.35,t+.004);g.gain.exponentialRampToValueAtTime(.0001,t+.06);
-    o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+.07)}catch(e){}
-  try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}}
-const CLK='button,.cust,.mic,.spk,.del,.ib,.btn,.lnk,.wab,a.btn';
+    // نرم، ہلکی "ٹپ" جیسی میٹھی آواز
+    o.type='sine';
+    o.frequency.setValueAtTime(700,t);o.frequency.exponentialRampToValueAtTime(1050,t+.05);
+    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.13,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+.13);
+    o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+.14)}catch(e){}
+  try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}}
+// آواز صرف مائک اور اسپیکر والے بٹنوں پر؛ باقی بٹن بغیر آواز کے صرف دبتے نظر آتے ہیں
+const CLK='.mic,.spk,.snd';
 addEventListener('pointerdown',e=>{const t=e.target.closest&&e.target.closest(CLK);if(t&&!t.classList.contains('busy'))tick()},true);
 
 // ===== آواز: فون کی اردو آواز (آف لائن بھی چلتی ہے)، پہلی کلک پر چلے =====
