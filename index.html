@@ -720,7 +720,7 @@ async function doReset(id){
     const old=await Promise.all(['customers','entries','sales'].map(k=>adb.collection('users/'+id+'/'+k).get()));
     const RA=firebase.initializeApp(CFG,'r'+Date.now()),ra=RA.auth(),rd=RA.firestore();
     const c=await ra.createUserWithEmailAndPassword(mail(u.phone,ver),pin),nu=c.user.uid;
-    await rd.doc('users/'+nu).set({name:u.name,phone:u.phone,createdAt:TSP.fromMillis((u.createdAt?u.createdAt.toMillis():Date.now())+1),paidUntil:u.paidUntil||TSP.fromMillis(Date.now()+30*DAY),lastSeen:FV.serverTimestamp()});
+    await rd.doc('users/'+nu).set({name:u.name,phone:u.phone,createdAt:TSP.fromMillis(Date.now()),paidUntil:TSP.fromMillis(Date.now()+30*DAY),lastSeen:FV.serverTimestamp()});
     const docs=[];old[0].forEach(d=>docs.push(['customers',d]));old[1].forEach(d=>docs.push(['entries',d]));old[2].forEach(d=>docs.push(['sales',d]));
     for(let i=0;i<docs.length;i+=400){const b=rd.batch();docs.slice(i,i+400).forEach(([k,d])=>b.set(rd.doc('users/'+nu+'/'+k+'/'+d.id),d.data()));await b.commit()}
     await adb.doc('phones/'+u.phone).set({v:ver,uid:nu});
@@ -763,3 +763,5 @@ if('serviceWorker'in navigator){const had=!!navigator.serviceWorker.controller;
 </script>
 </body>
 </html>
+
+
