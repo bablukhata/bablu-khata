@@ -197,7 +197,7 @@ function em(e){const c=e.code||'';
   if(c.includes('too-many'))return 'بہت کوششیں ہو گئیں۔ تھوڑی دیر بعد کریں';
   if(c.includes('permission'))return 'اجازت نہیں ہے';
   return 'کچھ گڑبڑ ہو گئی'}
-function footerHTML(){return `<div class="footer"><b>📒 ${APP_NAME}</b><br>واٹس ایپ: <a href="https://wa.me/92${WA_NUM.slice(1)}">${WA_NUM}</a><br><small>آپ کا ڈیجیٹل حساب کتاب</small>${deferredInstall?'<button class="lnk" onclick="installApp()">📲 ایپ ہوم اسکرین پر لگائیں</button>':''}</div>`}
+function footerHTML(){return `<div class="footer"><b>📒 ${APP_NAME}</b><br>واٹس ایپ: <a href="https://wa.me/92${WA_NUM.slice(1)}">${WA_NUM}</a><br><small>آپ کا ڈیجیٹل حساب کتاب</small><br><button class="lnk" onclick="speak(GREET)">🔊 السلام علیکم</button>${deferredInstall?'<button class="lnk" onclick="installApp()">📲 ایپ ہوم اسکرین پر لگائیں</button>':''}</div>`}
 async function installApp(){
   if(!deferredInstall)return toast('ایپ پہلے سے انسٹال ہے یا انسٹال نہیں ہو سکتی');
   deferredInstall.prompt();const r=await deferredInstall.userChoice;
@@ -255,19 +255,38 @@ function w2n(t){let tot=0,cur=0,ok=0;
     else if(w=='کروڑ'){tot+=(cur||1)*1e7;cur=0;ok=1}}
   return ok?tot+cur:0}
 let spT=0,spId=0;
-function speak(t){
+function speak(t,onStart,quiet){
   const ss=window.speechSynthesis;
-  if(!ss)return toast('یہ فون آواز نہیں دے سکتا');
+  if(!ss){if(!quiet)toast('یہ فون آواز نہیں دے سکتا');return}
   clearTimeout(spT);const id=++spId,txt=say(t);
-  const mk=()=>{const v=getVo(),u=new SpeechSynthesisUtterance(txt);u.lang=v?v.lang:'ur-PK';if(v)u.voice=v;u.rate=.85;u.pitch=1.15;return u};
+  const mk=()=>{const v=getVo(),u=new SpeechSynthesisUtterance(txt);u.lang=v?v.lang:'ur-PK';if(v)u.voice=v;u.rate=.85;u.pitch=1.15;u.onstart=onStart||null;return u};
   const run=()=>{
-    let ok=0;const u=mk();u.onstart=()=>{ok=1};
+    let ok=0;const u=mk();u.onstart=()=>{ok=1;if(onStart)onStart()};
     try{ss.resume()}catch(e){}
     ss.speak(u);
     // اگر فون نے آواز نگل لی ہو تو ایک بار خود دوبارہ کوشش
     setTimeout(()=>{if(id===spId&&!ok&&!ss.speaking){try{ss.cancel()}catch(e){}setTimeout(()=>{if(id===spId)ss.speak(mk())},100)}},900)};
   // خالی ہو تو فوراً بولے، مصروف ہو تو پہلے روکے پھر بولے
   if(ss.speaking||ss.pending){ss.cancel();spT=setTimeout(run,120)}else run()}
+
+// ===== دن میں ایک بار خود بخود سلام: ایپ کھلنے کے ایک سیکنڈ بعد =====
+const GREET='السلام علیکم، اللہ کا نام لے کر کاروبار شروع کریں';
+let greetArmed=false;
+function greetOnce(){
+  if(!me||expired())return;
+  const day=new Date().toDateString();
+  let last='';try{last=localStorage.getItem('greetDay')||''}catch(e){}
+  if(last===day)return;
+  let started=false;
+  // آواز واقعی شروع ہو جائے تب ہی آج کا دن "ہو گیا" لکھا جاتا ہے
+  speak(GREET,()=>{started=true;try{localStorage.setItem('greetDay',day)}catch(e){}},true);
+  // اگر کروم نے بغیر ٹچ کے آواز روک دی تو پہلی ٹچ پر سنا دے
+  setTimeout(()=>{
+    if(started||greetArmed)return;greetArmed=true;
+    const h=e=>{
+      if(e.target.closest&&e.target.closest('.spk,.mic,.wab'))return;
+      removeEventListener('click',h,true);greetArmed=false;greetOnce()};
+    addEventListener('click',h,true)},2500)}
 
 // ===== مائک: پہلی بار خود اجازت مانگتا ہے، ایک کلک پر شروع ہوتا ہے =====
 let rec=null,micT=0,micLock=0;
@@ -717,7 +736,7 @@ function tog(id,op){ask(op?'یہ کھاتہ 30 دن کے لیے کھولیں؟':
 // شروع
 function userStart(u){
   uid=u.uid;custs=[];ents=[];sales=[];view={n:'list'};q='';first=true;me=null;renderNow(false);const P='users/'+uid;
-  unsubs=[db.doc(P).onSnapshot(s=>{me=s.data()||null;render(first&&!!me);if(me)first=false}),
+  unsubs=[db.doc(P).onSnapshot(s=>{me=s.data()||null;render(first&&!!me);if(me){if(first)setTimeout(greetOnce,1000);first=false}}),
   db.collection(P+'/customers').onSnapshot(s=>{custs=s.docs.map(d=>({id:d.id,...d.data()}));if(me)render(false)}),
   db.collection(P+'/entries').onSnapshot(s=>{ents=s.docs.map(d=>({id:d.id,...d.data()}));if(me)render(false)}),
   db.collection(P+'/sales').onSnapshot(s=>{sales=s.docs.map(d=>({id:d.id,...d.data()}));if(me)render(false)},()=>{})];
