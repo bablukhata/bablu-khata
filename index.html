@@ -476,8 +476,9 @@ function authHTML(){const m=authMode;
   <div id="er" class="er"></div>
   <button id="go" class="btn" onclick="${m=='login'?'login()':m=='new'?'signup(false)':'signup(true)'}">${m=='login'?'✅ کھاتے میں جائیں':m=='new'?'✅ کھاتا بنائیں':'⚠️ نیا کھاتا بنائیں'}</button>
   <button id="installBtn" onclick="installApp()">📲 ایپ ہوم اسکرین پر لگائیں</button>
-  ${m=='login'?'<button class="lnk" onclick="setMode(\'new\')">🆕 نیا کھاتا بنائیں</button><button class="lnk" onclick="setMode(\'reset\')">🔑 پن بھول گئے؟</button>':'<button class="lnk" onclick="setMode(\'login\')">↩️ واپس</button>'}
+  ${m=='login'?'<button class="lnk" onclick="setMode(\'new\')">🆕 نیا کھاتا بنائیں</button><button class="lnk" onclick="forgotWA()">🔑 پن بھول گئے؟ (واٹس ایپ کریں)</button>':'<button class="lnk" onclick="setMode(\'login\')">↩️ واپس</button>'}
   </div>${footerHTML()}</div>`}
+function forgotWA(){open('https://wa.me/92'+WA_NUM.slice(1)+'?text='+encodeURIComponent('السلام علیکم، میں اپنا پن بھول گیا ہوں۔ براہِ کرم نیا پن بنا دیں۔\nنام: \nموبائل نمبر: '),'_blank')}
 function setMode(m){authMode=m;$('#app').innerHTML=authHTML();if(deferredInstall){const b=$('#installBtn');if(b)b.style.display='block'}}
 function vals(){return{ph:en($('#ph').value||'').trim(),pn:en($('#pn').value||'').trim(),nm:$('#nm')?$('#nm').value.trim():''}}
 function check(v,nn){
@@ -722,7 +723,7 @@ async function doReset(id){
     await rd.doc('users/'+nu).set({name:u.name,phone:u.phone,createdAt:TSP.fromMillis((u.createdAt?u.createdAt.toMillis():Date.now())+1),paidUntil:u.paidUntil||TSP.fromMillis(Date.now()+30*DAY),lastSeen:FV.serverTimestamp()});
     const docs=[];old[0].forEach(d=>docs.push(['customers',d]));old[1].forEach(d=>docs.push(['entries',d]));old[2].forEach(d=>docs.push(['sales',d]));
     for(let i=0;i<docs.length;i+=400){const b=rd.batch();docs.slice(i,i+400).forEach(([k,d])=>b.set(rd.doc('users/'+nu+'/'+k+'/'+d.id),d.data()));await b.commit()}
-    await rd.doc('phones/'+u.phone).set({v:ver,uid:nu});
+    await adb.doc('phones/'+u.phone).set({v:ver,uid:nu});
     await ra.signOut();RA.delete().catch(()=>{});
     closeSheet();toast('✅ نیا پن: '+pin+' (دکاندار کو بتا دیں)')
   }catch(e){busy(0);er((e.code||'').includes('permission')?'Firebase Rules میں ایڈمن کو اجازت دیں':em(e))}}
