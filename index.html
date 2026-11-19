@@ -134,6 +134,10 @@ a{color:inherit;text-decoration:none}
 .kp .eq{background:#0f766e;color:#fff}
 .kp .w2{grid-column:span 2}
 .btn.org{background:#ea580c;box-shadow:0 4px 0 #c2410c}
+.spk:active{background:#86efac;transform:scale(.88)}
+.mic:active{background:#7dd3fc;transform:scale(.88)}
+.ib:active{background:#ffffff66;transform:scale(.94)}
+.del:active{background:#fca5a5;transform:scale(.9)}
 /* واٹس ایپ یاددہانی بٹن */
 .wab{display:block;width:100%;margin-top:10px;border:0;border-radius:16px;padding:2px 12px;font-size:18px;line-height:2.2;color:#fff;background:linear-gradient(135deg,#25d366,#128c7e);box-shadow:0 3px 0 #0b6b5e;cursor:pointer;transition:transform .08s,box-shadow .08s}
 .wab:active{transform:translateY(3px);box-shadow:none}
@@ -193,7 +197,7 @@ function em(e){const c=e.code||'';
   if(c.includes('too-many'))return 'بہت کوششیں ہو گئیں۔ تھوڑی دیر بعد کریں';
   if(c.includes('permission'))return 'اجازت نہیں ہے';
   return 'کچھ گڑبڑ ہو گئی'}
-function footerHTML(){return `<div class="footer"><b>📒 ${APP_NAME}</b><br>واٹس ایپ: <a href="https://wa.me/92${WA_NUM.slice(1)}">${WA_NUM}</a><br><small>آپ کا ڈیجیٹل حساب کتاب</small><br><button class="lnk" onclick="nextVoice()">🔈 آواز بدلیں</button>${deferredInstall?'<button class="lnk" onclick="installApp()">📲 ایپ ہوم اسکرین پر لگائیں</button>':''}</div>`}
+function footerHTML(){return `<div class="footer"><b>📒 ${APP_NAME}</b><br>واٹس ایپ: <a href="https://wa.me/92${WA_NUM.slice(1)}">${WA_NUM}</a><br><small>آپ کا ڈیجیٹل حساب کتاب</small>${deferredInstall?'<button class="lnk" onclick="installApp()">📲 ایپ ہوم اسکرین پر لگائیں</button>':''}</div>`}
 async function installApp(){
   if(!deferredInstall)return toast('ایپ پہلے سے انسٹال ہے یا انسٹال نہیں ہو سکتی');
   deferredInstall.prompt();const r=await deferredInstall.userChoice;
@@ -206,6 +210,21 @@ const relPress=()=>{clearTimeout(pT);pT=setTimeout(()=>{pressing=false},80)};
 addEventListener('pointerup',relPress,true);
 addEventListener('pointercancel',relPress,true);
 
+// ===== ٹک کی آواز: ہر بٹن دبانے پر (انٹرنیٹ کے بغیر بھی چلتی ہے) + ہلکی تھرتھراہٹ =====
+let AC=null;
+function tick(){
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state=='suspended')AC.resume();
+    const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();
+    o.type='triangle';
+    o.frequency.setValueAtTime(1500,t);o.frequency.exponentialRampToValueAtTime(600,t+.04);
+    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.35,t+.004);g.gain.exponentialRampToValueAtTime(.0001,t+.06);
+    o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+.07)}catch(e){}
+  try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}}
+const CLK='button,.cust,.mic,.spk,.del,.ib,.btn,.lnk,.wab,a.btn';
+addEventListener('pointerdown',e=>{const t=e.target.closest&&e.target.closest(CLK);if(t&&!t.classList.contains('busy'))tick()},true);
+
 // ===== آواز: فون کی اردو آواز (آف لائن بھی چلتی ہے)، پہلی کلک پر چلے =====
 const urV=()=>window.speechSynthesis?speechSynthesis.getVoices().filter(x=>/^ur/i.test(x.lang)):[];
 if(window.speechSynthesis){try{speechSynthesis.getVoices()}catch(e){}speechSynthesis.onvoiceschanged=()=>{}}
@@ -214,7 +233,12 @@ function unlockTTS(){
   if(ttsUnlocked||!window.speechSynthesis)return;ttsUnlocked=true;
   try{const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u)}catch(e){}}
 addEventListener('pointerdown',unlockTTS,{once:true,capture:true});
-function getVo(){const l=urV(),n=localStorage.getItem('vo');return l.find(x=>x.voiceURI==n)||l.find(x=>x.localService)||l[0]||null}
+// ہمیشہ آواز نمبر 2 (اگر نہ ہو تو پہلی)۔ انٹرنیٹ نہ ہو اور وہ آواز آن لائن والی ہو تو فون میں محفوظ آواز چلے
+function getVo(){
+  const l=urV();if(!l.length)return null;
+  const v=l[1]||l[0];
+  if(!navigator.onLine&&!v.localService)return l.find(x=>x.localService)||v;
+  return v}
 function noVoice(){sheet(`<h2 class="c">🔈 اردو آواز نہیں ملی</h2><p class="c">فون Settings ← Google Text-to-speech (یا Speech Services) ← Install voice data ← اردو (پاکستان) ڈاؤن لوڈ کریں۔ ایک بار ڈاؤن لوڈ ہو جائے تو انٹرنیٹ کے بغیر بھی بولے گا۔</p><button class="btn" onclick="closeSheet()">✅ ٹھیک ہے</button>`)}
 const UW='زیرو ایک دو تین چار پانچ چھ سات آٹھ نو دس گیارہ بارہ تیرہ چودہ پندرہ سولہ سترہ اٹھارہ انیس بیس اکیس بائیس تئیس چوبیس پچیس چھبیس ستائیس اٹھائیس انتیس تیس اکتیس بتیس تینتیس چونتیس پینتیس چھتیس سینتیس اڑتیس انتالیس چالیس اکتالیس بیالیس تینتالیس چوالیس پینتالیس چھیالیس سینتالیس اڑتالیس انچاس پچاس اکاون باون ترپن چون پچپن چھپن ستاون اٹھاون انسٹھ ساٹھ اکسٹھ باسٹھ تریسٹھ چونسٹھ پینسٹھ چھیاسٹھ سڑسٹھ اڑسٹھ انہتر ستر اکہتر بہتر تہتر چوہتر پچھتر چھہتر ستتر اٹھہتر انیاسی اسی اکیاسی بیاسی تراسی چوراسی پچاسی چھیاسی ستاسی اٹھاسی نواسی نوے اکیانوے بانوے ترانوے چورانوے پچانوے چھیانوے ستانوے اٹھانوے ننانوے'.split(' ');
 // 1300 = "ایک ہزار، تین سو" (ہر حصے کے بیچ وقفہ تاکہ آواز "ہزار" نہ چھوڑے)
@@ -244,11 +268,6 @@ function speak(t){
     setTimeout(()=>{if(id===spId&&!ok&&!ss.speaking){try{ss.cancel()}catch(e){}setTimeout(()=>{if(id===spId)ss.speak(mk())},100)}},900)};
   // خالی ہو تو فوراً بولے، مصروف ہو تو پہلے روکے پھر بولے
   if(ss.speaking||ss.pending){ss.cancel();spT=setTimeout(run,120)}else run()}
-function nextVoice(){
-  const l=urV();
-  if(l.length){const i=(l.findIndex(x=>x===getVo())+1)%l.length;localStorage.setItem('vo',l[i].voiceURI);toast('آواز '+(i+1)+' / '+l.length)}
-  else toast('اردو آواز نہیں ملی، فون کی عام آواز چلے گی');
-  speak('السلام علیکم، اللہ کا نام لے کر کاروبار شروع کریں')}
 
 // ===== مائک: پہلی بار خود اجازت مانگتا ہے، ایک کلک پر شروع ہوتا ہے =====
 let rec=null,micT=0,micLock=0;
